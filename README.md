@@ -11,8 +11,9 @@ Use kaggle for now instead of GCP
 Dataset
 https://drive.google.com/drive/folders/1bXXeEzARYWsvUwbW3SA0meulCR3nIhDb
 Download dataset then move all images into a subfolder (the name of the subfolder can be anything) so the final structure looks like this:
-> faces
-    > SUBFOLDER
-        > img1.png
-        > img2.png 
+> data
+    > faces
+        > SUBFOLDER
+            > img1.png
+            > img2.png 
 This is done so the torchvision ImageFolder dataloader properly loads the images
