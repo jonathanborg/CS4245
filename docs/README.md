@@ -1,4 +1,4 @@
-# SwinIR: Image Restoration Using Swin Transformer
+# Towards the Automatic Anime Characters Creation with Generative Adversarial Networks
 
 ## A Computer Vision by Deep Learning Study
 
@@ -6,6 +6,10 @@
 
 Original Paper: [https://arxiv.org/abs/1708.05509](https://arxiv.org/abs/1708.05509)
 
+
+Differences:
+
+Images are set to a resolution of 96x96 - theirs was 128x128
 
 ---
 
