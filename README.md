@@ -11,8 +11,9 @@ TODOs:
 Possible improvements:
 We can use other cartoon items as long as there is enough data
 
-Use kaggle for now instead of GCP (https://www.kaggle.com/code/jonathanborg/cs4245-cv-by-dl)
 
+Use kaggle for now instead of GCP (https://www.kaggle.com/code/jonathanborg/cs4245-cv-by-dl)
+- This will be done once initial training is complete - for clean up purposes and less development on local machines
 
 Dataset
 https://drive.google.com/drive/folders/1bXXeEzARYWsvUwbW3SA0meulCR3nIhDb
