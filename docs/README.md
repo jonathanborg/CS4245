@@ -1,6 +1,6 @@
 # SwinIR: Image Restoration Using Swin Transformer
 
-## A reproducibility Study
+## A Computer Vision by Deep Learning Study
 
 <u>Group 24</u> -  **Frans de Boer**, **Jonathan Borg**, **Haoran Xia**
 
