@@ -3,9 +3,10 @@ CS4245 Seminar Computer Vision by Deep Learning (2021/22 Q4)
 
 TODOs:
 - [x] Download dataset & be sure that there is enough data (30k images)
-- [ ] Look into GAN architecture (DC and Style GAN)
-- [ ] Start Training
 - [x] Setup Kaggle
+- [ ] Implement different GAN architecture (DC, Style and Wasserstein GAN) & Train
+- [ ] Start looking into the evaluation metrics
+- [ ] Start Training
 - [ ] Setup Blog Post
 
 Possible improvements:
