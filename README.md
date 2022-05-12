@@ -5,7 +5,7 @@ TODOs:
 - [x] Download dataset & be sure that there is enough data (30k images)
 - [ ] Look into GAN architecture (DC and Style GAN)
 - [ ] Start Training
-- [ ] Setup Kaggle?
+- [x] Setup Kaggle
 - [ ] Setup Blog Post
 
 Possible improvements:
