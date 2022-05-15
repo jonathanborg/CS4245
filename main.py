@@ -1,10 +1,11 @@
+from unicodedata import normalize
 import torch as th
 import torchvision
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from models import Generator, Discriminator
-from utils import weights_init, save_images
+from utils import weights_init, save_images, save_model_snapshot
 
 dataroot = './data/faces'
 batch_size = 128
@@ -72,5 +73,4 @@ for epoch in range(num_epochs):
         optimizerG.step()
 
     with th.no_grad():
-        fake = netG(fixed_noise).detach().cpu()
-        save_images(batch, device, f'generated-{epoch}.png')
+        save_model_snapshot(netD, netG, epoch, fixed_noise, device, nz)
