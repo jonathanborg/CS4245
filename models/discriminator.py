@@ -33,7 +33,7 @@ class Discriminator(th.nn.Module):
             DiscriminatorBlock(feature_map_depth * 2, feature_map_depth * 4),
             DiscriminatorBlock(feature_map_depth * 4, feature_map_depth * 8),
             DiscriminatorBlock(feature_map_depth * 8, feature_map_depth * 8),
-            DiscriminatorBlock(feature_map_depth * 8, last=True)
+            DiscriminatorBlock(feature_map_depth * 8, 1, last=True)
         )
 
     def forward(self, x):
