@@ -83,5 +83,5 @@ for epoch in range(num_epochs):
         plt.title('Training images')
         plt.imshow(np.transpose(vutils.make_grid(fake.to(device)[:64], padding=2, normalize=True).cpu(), (1, 2, 0)))
         plt.show()
-        plt.savefig(f'./generator_results/generated-{epoch}.png')
+        plt.savefig(f'./results/generated-{epoch}.png')
         plt.close()
