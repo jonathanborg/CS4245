@@ -1,26 +1,24 @@
 import torch as th
 
 class GeneratorBlock(th.nn.Module):
-    def __init__(self, channels, first=False, last=False, noise_size=0, colour_channels=0) -> None:
+    def __init__(self, in_channels, out_channels, first=False, last=False) -> None:
         assert(not (first and last)) # block can't be both first and last
-        assert((not first) or noise_size > 0) # first -> noise_size > 0 (noise_size needs to be set for the first layer)
-        assert((not last) or colour_channels > 0) # last -> colour_channels > 0 (colour_channels needs to be set for the last layer)
         super().__init__()
         if first:
             self.main = th.nn.Sequential(
-                th.nn.ConvTranspose2d(noise_size, channels, 3, 1, 0, bias=False),
-                th.nn.BatchNorm2d(channels),
+                th.nn.ConvTranspose2d(in_channels, out_channels, 3, 1, 0, bias=False),
+                th.nn.BatchNorm2d(out_channels),
                 th.nn.ReLU(True)
             )
         elif last:
             self.main = th.nn.Sequential(
-                th.nn.ConvTranspose2d(channels, colour_channels, 4, 2, 1, bias=False),
+                th.nn.ConvTranspose2d(in_channels, out_channels, 4, 2, 1, bias=False),
                 th.nn.Tanh()
             )
         else:
             self.main = th.nn.Sequential(
-                th.nn.ConvTranspose2d(channels, channels // 2, 4, 2, 1, bias=False),
-                th.nn.BatchNorm2d(channels // 2),
+                th.nn.ConvTranspose2d(in_channels, out_channels, 4, 2, 1, bias=False),
+                th.nn.BatchNorm2d(out_channels),
                 th.nn.ReLU(True)
             )
 
@@ -32,12 +30,12 @@ class Generator(th.nn.Module):
         super().__init__()
         # first layer, no stride. Upsample from 1x1 to 4x4
         self.main = th.nn.Sequential(
-            GeneratorBlock(feature_map_depth * 16, first=True, noise_size=noise_size),
-            GeneratorBlock(feature_map_depth * 16),
-            GeneratorBlock(feature_map_depth * 8),
-            GeneratorBlock(feature_map_depth * 4),
-            GeneratorBlock(feature_map_depth * 2),
-            GeneratorBlock(feature_map_depth * 1, last=True, colour_channels=colour_channels),
+            GeneratorBlock(noise_size, feature_map_depth * 8, first=True, noise_size=noise_size),
+            GeneratorBlock(feature_map_depth * 8, feature_map_depth * 8),
+            GeneratorBlock(feature_map_depth * 8, feature_map_depth * 4),
+            GeneratorBlock(feature_map_depth * 4, feature_map_depth * 2),
+            GeneratorBlock(feature_map_depth * 2, feature_map_depth * 1),
+            GeneratorBlock(feature_map_depth * 1, colour_channels, last=True),
         )
 
     def forward(self, x):
