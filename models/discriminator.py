@@ -12,7 +12,7 @@ class DiscriminatorBlock(th.nn.Module):
             )
         elif last:
             self.main = th.nn.Sequential(
-                th.nn.Conv2d(channels, 1, 4, 1, 0, bias=False),
+                th.nn.Conv2d(channels, 1, 3, 1, 0, bias=False),
                 th.nn.Sigmoid()
             )
         else:
@@ -33,8 +33,8 @@ class Discriminator(th.nn.Module):
             DiscriminatorBlock(feature_map_depth),
             DiscriminatorBlock(feature_map_depth * 2),
             DiscriminatorBlock(feature_map_depth * 4),
-            DiscriminatorBlock(feature_map_depth * 8, last=True),
-            # DiscriminatorBlock(feature_map_depth * 16, last=True)
+            DiscriminatorBlock(feature_map_depth * 8),
+            DiscriminatorBlock(feature_map_depth * 16, last=True)
         )
 
     def forward(self, x):

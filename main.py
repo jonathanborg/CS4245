@@ -24,7 +24,6 @@ ngpu = 1
 
 device = th.device('cuda:0' if th.cuda.is_available() and ngpu > 0 else 'cpu')
 transform = torchvision.transforms.Compose([
-        torchvision.transforms.Resize(64),
         torchvision.transforms.ToTensor(),
     ])
 dataset = torchvision.datasets.ImageFolder(dataroot, transform=transform)
@@ -47,6 +46,12 @@ real_label = 1
 fake_label = 0
 optimizerD = th.optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
 optimizerG = th.optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
+
+fake = netG(fixed_noise).detach()
+discriminated = netD(fake).detach()
+print(f'Image size size: {batch[0][0].size()}')
+print(f'Generated size: {fake[0].size()}')
+print(f'Discriminated size: {discriminated[0].size()}')
 
 
 for epoch in range(num_epochs):

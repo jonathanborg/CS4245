@@ -8,7 +8,7 @@ class GeneratorBlock(th.nn.Module):
         super().__init__()
         if first:
             self.main = th.nn.Sequential(
-                th.nn.ConvTranspose2d(noise_size, channels, 4, 1, 0, bias=False),
+                th.nn.ConvTranspose2d(noise_size, channels, 3, 1, 0, bias=False),
                 th.nn.BatchNorm2d(channels),
                 th.nn.ReLU(True)
             )
@@ -32,12 +32,12 @@ class Generator(th.nn.Module):
         super().__init__()
         # first layer, no stride. Upsample from 1x1 to 4x4
         self.main = th.nn.Sequential(
-            GeneratorBlock(feature_map_depth * 8, first=True, noise_size=noise_size),
+            GeneratorBlock(feature_map_depth * 16, first=True, noise_size=noise_size),
+            GeneratorBlock(feature_map_depth * 16),
             GeneratorBlock(feature_map_depth * 8),
             GeneratorBlock(feature_map_depth * 4),
             GeneratorBlock(feature_map_depth * 2),
             GeneratorBlock(feature_map_depth * 1, last=True, colour_channels=colour_channels),
-            # GeneratorBlock(feature_map_depth * 1, last=True, colour_channels=colour_channels),
         )
 
     def forward(self, x):
