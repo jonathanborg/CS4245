@@ -49,7 +49,8 @@ optimizerG = th.optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
 
 fake = netG(fixed_noise).detach()
 discriminated = netD(fake).detach()
-print(f'Image size size: {batch[0][0].size()}')
+print(f'Noise size: {fixed_noise.size()}')
+print(f'Image size: {batch[0][0].size()}')
 print(f'Generated size: {fake[0].size()}')
 print(f'Discriminated size: {discriminated[0].size()}')
 
