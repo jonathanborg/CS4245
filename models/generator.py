@@ -30,7 +30,7 @@ class Generator(th.nn.Module):
         super().__init__()
         # first layer, no stride. Upsample from 1x1 to 4x4
         self.main = th.nn.Sequential(
-            GeneratorBlock(noise_size, feature_map_depth * 8, first=True, noise_size=noise_size),
+            GeneratorBlock(noise_size, feature_map_depth * 8, first=True),
             GeneratorBlock(feature_map_depth * 8, feature_map_depth * 8),
             GeneratorBlock(feature_map_depth * 8, feature_map_depth * 4),
             GeneratorBlock(feature_map_depth * 4, feature_map_depth * 2),
