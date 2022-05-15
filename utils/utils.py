@@ -29,5 +29,5 @@ def save_model_snapshot(netD, netG, epoch, fixed_noise, device, nz):
     fake = netG(noise).detach().cpu()
     save_images(fixed_fake, device, f'fixed-generated-{epoch}.png', path=path)
     save_images(fake, device, f'random-generated-{epoch}.png', path=path)
-    netD.save(f'{path}/netD.pth')
-    netG.save(f'{path}/netG.pth')
+    th.save(netD.state_dict(), f'{path}/netD.pth')
+    th.save(netG.state_dict(), f'{path}/netG.pth')
