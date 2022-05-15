@@ -21,7 +21,8 @@ ngpu = 1
 
 device = th.device('cuda:0' if th.cuda.is_available() and ngpu > 0 else 'cpu')
 transform = torchvision.transforms.Compose([
-        torchvision.transforms.ToTensor()
+        torchvision.transforms.Resize(64),
+        torchvision.transforms.ToTensor(),
     ])
 dataset = torchvision.datasets.ImageFolder(dataroot, transform=transform)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
