@@ -1,3 +1,4 @@
+from turtle import forward
 import torch as th
 import torchvision
 from torch.utils.data import DataLoader
@@ -20,7 +21,6 @@ ngpu = 1
 
 device = th.device('cuda:0' if th.cuda.is_available() and ngpu > 0 else 'cpu')
 transform = torchvision.transforms.Compose([
-        torchvision.transforms.Resize(64),
         torchvision.transforms.ToTensor()
     ])
 dataset = torchvision.datasets.ImageFolder(dataroot, transform=transform)
@@ -31,7 +31,6 @@ plt.figure(figsize=(8,8))
 plt.axis('off')
 plt.title('Training images')
 plt.imshow(np.transpose(vutils.make_grid(batch[0].to(device)[:64], padding=2, normalize=True).cpu(), (1, 2, 0)))
-plt.show()
 plt.savefig('./generator_results/real.png')
 plt.close()
 
@@ -43,68 +42,92 @@ def weights_init(m):
         th.nn.init.normal_(m.weight.data, 1.0, 0.02)
         th.nn.init.constant_(m.bias.data, 0)
 
-class Generator(th.nn.Module):
-    def __init__(self, ngpu) -> None:
+class GeneratorBlock(th.nn.Module):
+    def __init__(self, channels, first=False, last=False) -> None:
         super().__init__()
-        self.ngpu = ngpu
-        self.main = th.nn.Sequential(
-            # input is z
-            th.nn.ConvTranspose2d(nz, ngf * 8, 4, 1, 0, bias=False),
-            th.nn.BatchNorm2d(ngf * 8),
-            th.nn.ReLU(True),
-            # state size (ngf*8) * 4 * 4
-            th.nn.ConvTranspose2d(ngf * 8, ngf * 4, 4, 2, 1, bias=False),
-            th.nn.BatchNorm2d(ngf * 4),
-            th.nn.ReLU(True),
-            # state size (ngf * 4) * 8 * 8
-            th.nn.ConvTranspose2d(ngf * 4, ngf * 2, 4, 2, 1, bias=False),
-            th.nn.BatchNorm2d(ngf * 2),
-            th.nn.ReLU(True),
-            # state size (ngf * 2) * 16 * 16
-            th.nn.ConvTranspose2d(ngf * 2, ngf, 4, 2, 1, bias=False),
-            th.nn.BatchNorm2d(ngf),
-            th.nn.ReLU(True),
-            # state size ngf * 32 * 32,
-            th.nn.ConvTranspose2d(ngf, nc, 4, 2, 1, bias=False),
-            th.nn.Tanh()   
-        )
+        if first:
+            self.main = th.nn.Sequential(
+                th.nn.ConvTranspose2d(nz, channels, 3, 1, 0, bias=False),
+                th.nn.BatchNorm2d(channels),
+                th.nn.ReLU(True)
+            )
+        elif last:
+            self.main = th.nn.Sequential(
+                th.nn.ConvTranspose2d(channels, nc, 4, 2, 1, bias=False),
+                th.nn.Tanh()
+            )
+        else:
+            self.main = th.nn.Sequential(
+                th.nn.ConvTranspose2d(channels, channels // 2, 4, 2, 1, bias=False),
+                th.nn.BatchNorm2d(channels // 2),
+                th.nn.ReLU(True)
+            )
 
     def forward(self, x):
         return self.main(x)
 
+class Generator(th.nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+        # first layer, no stride. Upsample from 1x1 to 4x4
+        self.main = th.nn.Sequential(
+            GeneratorBlock(ngf * 16, first=True),
+            GeneratorBlock(ngf * 16),
+            GeneratorBlock(ngf * 8),
+            GeneratorBlock(ngf * 4),
+            GeneratorBlock(ngf * 2),
+            GeneratorBlock(ngf * 1, last=True),
+        )
+
+    def forward(self, x):
+        x = self.main(x)
+        return x
+
+
+class DiscriminatorBlock(th.nn.Module):
+    def __init__(self, channels, first=False, last=False) -> None:
+        super().__init__()
+        if first:
+            self.main = th.nn.Sequential(
+                th.nn.Conv2d(nc, channels, 4, 2, 1, bias=False),
+                th.nn.LeakyReLU(0.2, inplace=True),
+            )
+        elif last:
+            self.main = th.nn.Sequential(
+                th.nn.Conv2d(channels, 1, 3, 1, 0, bias=False),
+                th.nn.Sigmoid()
+            )
+        else:
+            self.main = th.nn.Sequential(
+                th.nn.Conv2d(channels, channels * 2, 4, 2, 1, bias=False),
+                th.nn.BatchNorm2d(channels * 2),
+                th.nn.LeakyReLU(0.2, inplace=True),
+            )
+
+    def forward(self, x):
+        return self.main(x)
 
 class Discriminator(th.nn.Module):
-    def __init__(self, ngpu) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.ngpu = ngpu
         self.main = th.nn.Sequential(
-            th.nn.Conv2d(nc, ndf, 4, 2, 1, bias=False),
-            th.nn.LeakyReLU(0.2, inplace=True),
-
-            th.nn.Conv2d(ndf, ndf * 2, 4, 2, 1, bias=False),
-            th.nn.BatchNorm2d(ndf * 2),
-            th.nn.LeakyReLU(0.2, inplace=True),
-
-            th.nn.Conv2d(ndf * 2, ndf * 4, 4, 2, 1, bias=False),
-            th.nn.BatchNorm2d(ndf * 4),
-            th.nn.LeakyReLU(0.2, inplace=True),
-
-            th.nn.Conv2d(ndf * 4, ndf * 8, 4, 2, 1, bias=False),
-            th.nn.BatchNorm2d(ndf * 8),
-            th.nn.LeakyReLU(0.2, inplace=True),
-
-            th.nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
-            th.nn.Sigmoid()
+            DiscriminatorBlock(ndf, first=True),
+            DiscriminatorBlock(ndf),
+            DiscriminatorBlock(ndf * 2),
+            DiscriminatorBlock(ndf * 4),
+            DiscriminatorBlock(ndf * 8),
+            DiscriminatorBlock(ndf * 16, last=True)
         )
 
     def forward(self, x):
-        return self.main(x)
+        x = self.main(x)
+        return x
 
 
-netG = Generator(ngpu).to(device)
+netG = Generator().to(device)
 netG.apply(weights_init)
 print(netG)
-netD = Discriminator(ngpu).to(device)
+netD = Discriminator().to(device)
 netD.apply(weights_init)
 print(netD)
 
@@ -157,6 +180,8 @@ for epoch in range(num_epochs):
 
         G_losses.append(errG.item())
         D_losses.append(errD.item())
+        break
+    break
 
     with th.no_grad():
         fake = netG(fixed_noise).detach().cpu()
@@ -164,7 +189,6 @@ for epoch in range(num_epochs):
         plt.axis('off')
         plt.title('Training images')
         plt.imshow(np.transpose(vutils.make_grid(fake.to(device)[:64], padding=2, normalize=True).cpu(), (1, 2, 0)))
-        plt.show()
         plt.savefig(f'./generator_results/generated-{epoch}.png')
         plt.close()
 
@@ -174,6 +198,5 @@ with th.no_grad():
     plt.axis('off')
     plt.title('Training images')
     plt.imshow(np.transpose(vutils.make_grid(fake.to(device)[:64], padding=2, normalize=True).cpu(), (1, 2, 0)))
-    plt.show()
     plt.savefig('./generator_results/generated_final.png')
     plt.close()
