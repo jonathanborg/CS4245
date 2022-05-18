@@ -1,7 +1,7 @@
 import torch as th
 
 class DiscriminatorBlock(th.nn.Module):
-    def __init__(self, in_channels, out_channels, first=False, last=False) -> None:
+    def __init__(self, in_channels: int, out_channels: int, first: bool = False, last: bool = False) -> None:
         assert(not (first and last)) # block can't be both first and last
         super().__init__()
         if first:
@@ -21,11 +21,11 @@ class DiscriminatorBlock(th.nn.Module):
                 th.nn.LeakyReLU(0.2, inplace=True),
             )
 
-    def forward(self, x):
+    def forward(self, x: th.Tensor) -> th.Tensor:
         return self.main(x)
 
 class Discriminator(th.nn.Module):
-    def __init__(self, colour_channels, feature_map_depth) -> None:
+    def __init__(self, colour_channels: int, feature_map_depth: int) -> None:
         super().__init__()
         self.main = th.nn.Sequential(
             DiscriminatorBlock(colour_channels, feature_map_depth, first=True),
@@ -36,6 +36,6 @@ class Discriminator(th.nn.Module):
             DiscriminatorBlock(feature_map_depth * 8, 1, last=True)
         )
 
-    def forward(self, x):
+    def forward(self, x: th.Tensor) -> th.Tensor:
         x = self.main(x)
         return x

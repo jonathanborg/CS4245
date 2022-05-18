@@ -1,7 +1,7 @@
 import torch as th
 
 class GeneratorBlock(th.nn.Module):
-    def __init__(self, in_channels, out_channels, first=False, last=False) -> None:
+    def __init__(self, in_channels: int, out_channels: int, first: bool = False, last: bool = False) -> None:
         assert(not (first and last)) # block can't be both first and last
         super().__init__()
         if first:
@@ -22,11 +22,11 @@ class GeneratorBlock(th.nn.Module):
                 th.nn.ReLU(True)
             )
 
-    def forward(self, x):
+    def forward(self, x: th.Tensor) -> th.Tensor:
         return self.main(x)
 
 class Generator(th.nn.Module):
-    def __init__(self, noise_size, colour_channels, feature_map_depth) -> None:
+    def __init__(self, noise_size: int, colour_channels: int, feature_map_depth: int) -> None:
         super().__init__()
         # first layer, no stride. Upsample from 1x1 to 4x4
         self.main = th.nn.Sequential(
@@ -38,6 +38,6 @@ class Generator(th.nn.Module):
             GeneratorBlock(feature_map_depth * 1, colour_channels, last=True),
         )
 
-    def forward(self, x):
+    def forward(self, x: th.Tensor) -> th.Tensor:
         x = self.main(x)
         return x
