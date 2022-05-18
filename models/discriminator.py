@@ -25,10 +25,10 @@ class DiscriminatorBlock(th.nn.Module):
         return self.main(x)
 
 class Discriminator(th.nn.Module):
-    def __init__(self, colour_channels: int, feature_map_depth: int) -> None:
+    def __init__(self, feature_map_depth: int) -> None:
         super().__init__()
         self.main = th.nn.Sequential(
-            DiscriminatorBlock(colour_channels, feature_map_depth, first=True),
+            DiscriminatorBlock(3, feature_map_depth, first=True),
             DiscriminatorBlock(feature_map_depth, feature_map_depth * 2),
             DiscriminatorBlock(feature_map_depth * 2, feature_map_depth * 4),
             DiscriminatorBlock(feature_map_depth * 4, feature_map_depth * 8),

@@ -26,7 +26,7 @@ class GeneratorBlock(th.nn.Module):
         return self.main(x)
 
 class Generator(th.nn.Module):
-    def __init__(self, noise_size: int, colour_channels: int, feature_map_depth: int) -> None:
+    def __init__(self, noise_size: int, feature_map_depth: int) -> None:
         super().__init__()
         # first layer, no stride. Upsample from 1x1 to 4x4
         self.main = th.nn.Sequential(
@@ -35,7 +35,7 @@ class Generator(th.nn.Module):
             GeneratorBlock(feature_map_depth * 8, feature_map_depth * 4),
             GeneratorBlock(feature_map_depth * 4, feature_map_depth * 2),
             GeneratorBlock(feature_map_depth * 2, feature_map_depth * 1),
-            GeneratorBlock(feature_map_depth * 1, colour_channels, last=True),
+            GeneratorBlock(feature_map_depth * 1, 3, last=True),
         )
 
     def forward(self, x: th.Tensor) -> th.Tensor:
