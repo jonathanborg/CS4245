@@ -60,14 +60,15 @@ class Experiment:
         self.discriminator_optimizer.zero_grad()
         # discriminator on real images
         real = real.to(self.device)
-        true_labels = th.full((self.batch_size, ), 1, dtype=th.float, device=self.device)
+        batch_size = real.size(0)
+        true_labels = th.full((batch_size, ), 1, dtype=th.float, device=self.device)
         output = self.discriminator(real).view(-1)
         discriminator_real_error = self.criterion(output, true_labels)
         discriminator_real_error.backward()
         # discriminator on fake images
-        noise = th.randn(self.batch_size, self.noise_size, 1, 1, device=self.device)
+        noise = th.randn(batch_size, self.noise_size, 1, 1, device=self.device)
         fake_images = self.generator(noise)
-        fake_labels = th.full((self.batch_size, ), 0, dtype=th.float, device=self.device)
+        fake_labels = th.full((batch_size, ), 0, dtype=th.float, device=self.device)
         output = self.discriminator(fake_images.detach()).view(-1)
         discriminator_fake_error = self.criterion(output, fake_labels)
         discriminator_fake_error.backward()
