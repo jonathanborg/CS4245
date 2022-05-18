@@ -51,7 +51,13 @@ generator_optimizer = th.optim.Adam(generator.parameters(), lr=config['generator
 # create loss
 criterion = th.nn.BCELoss()
 # create experiment
-experiment = Experiment(config)
+experiment = Experiment(config, 
+                        generator, 
+                        discriminator, 
+                        generator_optimizer,
+                        discriminator_optimizer, 
+                        criterion, 
+                        dataloader)
 experiment.train()
 
 # fixed_noise = th.randn(64, config['noise_size'], 1, 1, device=device)
