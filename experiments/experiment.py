@@ -47,13 +47,13 @@ class Experiment:
     def train(self):
         for epoch in range(self.epochs):
             self.epoch()
-            if epoch % self.save_checkpoint_every and epoch > 0:
+            if epoch % self.save_checkpoint_every:
                 self.save_model_checkpoint(epoch)
-            if epoch % self.save_image_every and epoch > 0:
+            if epoch % self.save_image_every:
                 self.save_model_image(epoch)
 
     def epoch(self):
-        for (real, _) in tqdm(self.dataloader):
+        for (real, _) in self.dataloader:
             self.batch(real)
 
     def batch(self, real: th.Tensor):
