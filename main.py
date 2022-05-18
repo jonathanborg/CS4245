@@ -17,8 +17,8 @@ config = {
     'discriminator_feature_map_depth': 64,
     'generator_feature_map_depth': 64,
     # training
-    'save_checkpoint_every': 10,
-    'save_results_every': 10,
+    'save_checkpoint_every': 1,
+    'save_image_every': 1,
     'batch_size': 128,
     'epochs': 1000,
     'discriminator_lr': 0.002,
@@ -52,6 +52,7 @@ generator_optimizer = th.optim.Adam(generator.parameters(), lr=config['generator
 criterion = th.nn.BCELoss()
 # create experiment
 experiment = Experiment(config)
+experiment.train()
 
 # fixed_noise = th.randn(64, config['noise_size'], 1, 1, device=device)
 # real_label = 1
