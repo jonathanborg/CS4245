@@ -70,7 +70,7 @@ class Experiment:
         fake_images = self.generator(noise)
         fake_labels = th.full((self.batch_size, ), 0, dtype=th.float, device=self.device)
         output = self.discriminator(fake_images.detach()).view(-1)
-        discriminator_fake_error = self.criterion(fake_images, fake_labels)
+        discriminator_fake_error = self.criterion(output, fake_labels)
         discriminator_fake_error.backward()
         # optimizer step
         self.discriminator_optimizer.step()
