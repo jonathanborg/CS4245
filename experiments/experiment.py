@@ -91,7 +91,7 @@ class Experiment:
             'discriminator_model_state_dict': self.discriminator.state_dict(),
             'generator_optimizer_state_dict': self.generator_optimizer.state_dict(),
             'discriminator_optimizer_state_dict': self.discriminator_optimizer.state_dict(),
-        })
+        }, checkpoint_path)
         
 
     def save_model_image(self, epoch: int) -> None:
