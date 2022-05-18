@@ -82,7 +82,7 @@ class Experiment:
 
     def save_model_checkpoint(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)
-        checkpoint_path = f'self.full_path/{epoch}/checkpoint'
+        checkpoint_path = f'{self.full_path}/{epoch}/checkpoint'
         if not os.path.isdir(checkpoint_path):
             os.mkdir(checkpoint_path)
         th.save({
@@ -96,7 +96,7 @@ class Experiment:
 
     def save_model_image(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)
-        image_path = f'self.full_path/{epoch}/images'
+        image_path = f'{self.full_path}/{epoch}/images'
         if not os.path.isdir(image_path):
             os.mkdir(image_path)
         random_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
@@ -115,6 +115,6 @@ class Experiment:
         plt.close()
 
     def make_epoch_directories(self, epoch: int) -> None:
-        epoch_path = f'self.full_path/{epoch}'
+        epoch_path = f'{self.full_path}/{epoch}'
         if not os.path.isdir(epoch_path):
             os.mkdir(epoch_path)
