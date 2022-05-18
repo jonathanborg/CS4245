@@ -26,7 +26,7 @@ class Experiment:
         # create paths
         if not path.isdir(self.results_path):
             os.mkdir(self.results_path)
-        assert not path.isdir(self.full_path, f'Experiment with name {self.experiment_name} already exists in directory {self.results_path}')
+        assert(not path.isdir(self.full_path),  f'Experiment with name {self.experiment_name} already exists in directory {self.results_path}')
         os.mkdir(self.full_path)
         # store models, optimizers, criterion, and data
         self.generator = generator
