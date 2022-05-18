@@ -82,16 +82,14 @@ class Experiment:
 
     def save_model_checkpoint(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)
-        checkpoint_path = f'{self.full_path}/{epoch}/checkpoint'
-        if not os.path.isdir(checkpoint_path):
-            os.mkdir(checkpoint_path)
+        checkpoint_path = f'{self.full_path}/{epoch}'
         th.save({
             'epoch': epoch,
             'generator_model_state_dict': self.generator.state_dict(),
             'discriminator_model_state_dict': self.discriminator.state_dict(),
             'generator_optimizer_state_dict': self.generator_optimizer.state_dict(),
             'discriminator_optimizer_state_dict': self.discriminator_optimizer.state_dict(),
-        }, checkpoint_path)
+        }, f'{checkpoint_path}/checkpoint.th')
         
 
     def save_model_image(self, epoch: int) -> None:
