@@ -46,9 +46,9 @@ class Experiment:
         for epoch in range(self.epochs):
             self.epoch()
             print(f'Epoch {epoch}: stats :D')
-            if epoch % self.save_checkpoint_every:
+            if epoch % self.save_checkpoint_every == 0:
                 self.save_model_checkpoint(epoch)
-            if epoch % self.save_image_every:
+            if epoch % self.save_image_every == 0:
                 self.save_model_image(epoch)
 
     def epoch(self):
