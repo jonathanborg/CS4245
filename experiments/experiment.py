@@ -1,10 +1,8 @@
-from os import path
 import os
 import torch as th
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
-from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
 import torchvision.utils as vutils
@@ -24,7 +22,7 @@ class Experiment:
         self.experiment_name = config['experiment_name']
         self.full_path = f'{self.results_path}/{self.experiment_name}'
         # create paths
-        if not path.isdir(self.results_path):
+        if not os.path.isdir(self.results_path):
             os.mkdir(self.results_path)
         os.mkdir(self.full_path)
         # store models, optimizers, criterion, and data
@@ -47,6 +45,7 @@ class Experiment:
     def train(self):
         for epoch in range(self.epochs):
             self.epoch()
+            print(f'Epoch {epoch}: stats :D')
             if epoch % self.save_checkpoint_every:
                 self.save_model_checkpoint(epoch)
             if epoch % self.save_image_every:
@@ -74,7 +73,6 @@ class Experiment:
         discriminator_fake_error.backward()
         # optimizer step
         self.discriminator_optimizer.step()
-
         # generator
         self.generator_optimizer.zero_grad()
         output = self.discriminator(fake_images).view(-1)
@@ -85,7 +83,7 @@ class Experiment:
     def save_model_checkpoint(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)
         checkpoint_path = f'self.full_path/{epoch}/checkpoint'
-        if not path.isdir(checkpoint_path):
+        if not os.path.isdir(checkpoint_path):
             os.mkdir(checkpoint_path)
         th.save({
             'epoch': epoch,
@@ -99,7 +97,7 @@ class Experiment:
     def save_model_image(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)
         image_path = f'self.full_path/{epoch}/images'
-        if not path.isdir(image_path):
+        if not os.path.isdir(image_path):
             os.mkdir(image_path)
         random_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
         fixed_fakes = self.generator(self.fixed_noise).detach().cpu()
@@ -118,5 +116,5 @@ class Experiment:
 
     def make_epoch_directories(self, epoch: int) -> None:
         epoch_path = f'self.full_path/{epoch}'
-        if not path.isdir(epoch_path):
+        if not os.path.isdir(epoch_path):
             os.mkdir(epoch_path)
