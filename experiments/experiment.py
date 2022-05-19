@@ -50,7 +50,6 @@ class Experiment:
     def train(self):
         for epoch in range(self.epochs):
             fretchet_dist, generator_error, discriminator_real_error = self.epoch()
-            print(f'Epoch {epoch}: stats :D')
             print('[%d/%d]\tLoss_G: %.4f\tLoss_D: %.4f\tFretchet_Distance: %.4f' % (epoch+1, self.epochs, generator_error.item(), discriminator_real_error.item(),fretchet_dist))
             if epoch % self.save_checkpoint_every == 0:
                 self.save_model_checkpoint(epoch)
