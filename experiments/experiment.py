@@ -85,7 +85,7 @@ class Experiment:
         # generator
         self.generator_optimizer.zero_grad()
         output = self.discriminator(fake_images).view(-1)
-        generator_error = self.criterion(output, true_labels)
+        generator_error = self.criterion(output, fake_labels)
         generator_error.backward()
         self.generator_optimizer.step()
         return real, fake_images, generator_error, discriminator_real_error
