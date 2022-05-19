@@ -18,7 +18,7 @@ config = {
     'generator_feature_map_depth': 64,
     # training
     'save_checkpoint_every': 10,
-    'save_image_every': 10,
+    'save_image_every': 1,
     'batch_size': 128,
     'epochs': 10,
     'discriminator_lr': 0.002,
