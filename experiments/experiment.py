@@ -108,7 +108,6 @@ class Experiment:
         plt.axis('off')
         plt.title('Generated Images')
         plt.imshow(np.transpose(vutils.make_grid(images.to(self.device)[:64], padding=2, normalize=True).cpu(), (1, 2, 0)))
-        plt.show()
         plt.savefig(path)
         plt.close()
 
