@@ -53,8 +53,10 @@ class Experiment:
             print('[%d/%d]\tLoss_G: %.4f\tLoss_D: %.4f\tFretchet_Distance: %.4f' % (epoch+1, self.epochs, generator_error.item(), discriminator_real_error.item(),fretchet_dist))
             with th.no_grad():
                 if epoch % self.save_checkpoint_every == 0:
+                    print('-> Saving model checkpoint')
                     self.save_model_checkpoint(epoch)
                 if epoch % self.save_image_every == 0:
+                    print('-> Saving model images')
                     self.save_model_image(epoch)
 
     def epoch(self):
