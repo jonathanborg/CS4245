@@ -23,9 +23,9 @@ class Experiment:
         self.experiment_name = config['experiment_name']
         self.full_path = f'{self.results_path}/{self.experiment_name}'
         # create paths
-        # if not os.path.isdir(self.results_path):
-        #     os.mkdir(self.results_path)
-        # os.mkdir(self.full_path)
+        if not os.path.isdir(self.results_path):
+            os.mkdir(self.results_path)
+        os.mkdir(self.full_path)
         # store models, optimizers, criterion, and data
         self.generator = generator
         self.discriminator = discriminator
