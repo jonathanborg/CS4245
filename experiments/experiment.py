@@ -51,15 +51,17 @@ class Experiment:
         for epoch in range(self.epochs):
             fretchet_dist, generator_error, discriminator_real_error = self.epoch()
             print('[%d/%d]\tLoss_G: %.4f\tLoss_D: %.4f\tFretchet_Distance: %.4f' % (epoch+1, self.epochs, generator_error.item(), discriminator_real_error.item(),fretchet_dist))
-            if epoch % self.save_checkpoint_every == 0:
-                self.save_model_checkpoint(epoch)
-            if epoch % self.save_image_every == 0:
-                self.save_model_image(epoch)
+            with th.no_grad():
+                if epoch % self.save_checkpoint_every == 0:
+                    self.save_model_checkpoint(epoch)
+                if epoch % self.save_image_every == 0:
+                    self.save_model_image(epoch)
 
     def epoch(self):
         for (real, _) in self.dataloader:
             real_image, fake_image, generator_error, discriminator_real_error = self.batch(real)
-        fretchet_dist = calculate_fretchet(real_image, fake_image, self.discriminator) 
+        # fretchet_dist = calculate_fretchet(real_image, fake_image, self.discriminator) 
+        fretchet_dist = 0
         return fretchet_dist, generator_error, discriminator_real_error
 
 
