@@ -114,13 +114,13 @@ class Experiment:
         random_noise = th.normal(0, 1, size=(64, *self.noise_shape), device=self.device)
         fixed_fakes = self.generator(self.fixed_noise).detach().cpu()
         random_fakes = self.generator(random_noise).detach().cpu()
-        self.save_image_grid(fixed_fakes, f'{image_path}/fixed.png')
-        self.save_image_grid(random_fakes, f'{image_path}/random.png')
+        self.save_image_grid(fixed_fakes, f'{image_path}/fixed.png', 'Fixed Noise')
+        self.save_image_grid(random_fakes, f'{image_path}/random.png', 'Random Noise')
 
-    def save_image_grid(self, images, path: str) -> None:
+    def save_image_grid(self, images, path: str, title: str) -> None:
         plt.figure(figsize=(8,8))
         plt.axis('off')
-        plt.title('Generated Images')
+        plt.title(title)
         plt.imshow(np.transpose(vutils.make_grid(images.to(self.device)[:64], padding=2, normalize=True).cpu(), (1, 2, 0)))
         plt.savefig(path)
         plt.close()
