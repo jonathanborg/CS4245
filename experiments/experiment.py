@@ -23,9 +23,9 @@ class Experiment:
         self.experiment_name = config['experiment_name']
         self.full_path = f'{self.results_path}/{self.experiment_name}'
         # create paths
-        if not os.path.isdir(self.results_path):
-            os.mkdir(self.results_path)
-        os.mkdir(self.full_path)
+        # if not os.path.isdir(self.results_path):
+        #     os.mkdir(self.results_path)
+        # os.mkdir(self.full_path)
         # store models, optimizers, criterion, and data
         self.generator = generator
         self.discriminator = discriminator
@@ -43,7 +43,8 @@ class Experiment:
         self.fake_label_value = config['fake_label_value']
         # constants
         self.device = th.device('cuda' if th.cuda.is_available() else 'cpu')
-        self.fixed_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
+        self.noise_shape = (self.noise_size, 1, 1)
+        self.fixed_noise = th.normal(0, 1, size=(64, *self.noise_shape), device=self.device)
 
 
     def train(self):
@@ -73,7 +74,7 @@ class Experiment:
         discriminator_real_error = self.criterion(output, true_labels)
         discriminator_real_error.backward()
         # discriminator on fake images
-        noise = th.randn(batch_size, self.noise_size, 1, 1, device=self.device)
+        noise = th.normal(0, 1, size=(batch_size, *self.noise_shape), device=self.device)
         fake_images = self.generator(noise)
         fake_labels = th.full((batch_size, ), self.fake_label_value, dtype=th.float, device=self.device)
         output = self.discriminator(fake_images.detach()).view(-1)
@@ -106,7 +107,7 @@ class Experiment:
         image_path = f'{self.full_path}/{epoch}/images'
         if not os.path.isdir(image_path):
             os.mkdir(image_path)
-        random_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
+        random_noise = th.normal(0, 1, size=(64, *self.noise_shape), device=self.device)
         fixed_fakes = self.generator(self.fixed_noise).detach().cpu()
         random_fakes = self.generator(random_noise).detach().cpu()
         self.save_image_grid(fixed_fakes, f'{image_path}/fixed.png')
