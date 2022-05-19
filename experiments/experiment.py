@@ -6,6 +6,7 @@ import torch.utils.data as data
 import matplotlib.pyplot as plt
 import numpy as np
 import torchvision.utils as vutils
+from experiments.evaluation import calculate_fretchet
 
 class Experiment:
     def __init__(self, 
@@ -42,10 +43,12 @@ class Experiment:
         self.device = th.device('cuda' if th.cuda.is_available() else 'cpu')
         self.fixed_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
 
+
     def train(self):
         for epoch in range(self.epochs):
-            self.epoch()
+            fretchet_dist, generator_error, discriminator_real_error = self.epoch()
             print(f'Epoch {epoch}: stats :D')
+            print('[%d/%d]\tLoss_G: %.4f\tLoss_D: %.4f\tFretchet_Distance: %.4f' % (epoch+1, self.epochs, generator_error.item(), discriminator_real_error.item(),fretchet_dist))
             if epoch % self.save_checkpoint_every == 0:
                 self.save_model_checkpoint(epoch)
             if epoch % self.save_image_every == 0:
@@ -53,7 +56,10 @@ class Experiment:
 
     def epoch(self):
         for (real, _) in self.dataloader:
-            self.batch(real)
+            real_image, fake_image, generator_error, discriminator_real_error = self.batch(real)
+        fretchet_dist = calculate_fretchet(real_image, fake_image, self.discriminator) 
+        return fretchet_dist, generator_error, discriminator_real_error
+
 
     def batch(self, real: th.Tensor):
         self.discriminator_optimizer.zero_grad()
@@ -79,6 +85,7 @@ class Experiment:
         generator_error = self.criterion(output, true_labels)
         generator_error.backward()
         self.generator_optimizer.step()
+        return real, fake_images, generator_error, discriminator_real_error
 
     def save_model_checkpoint(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)
