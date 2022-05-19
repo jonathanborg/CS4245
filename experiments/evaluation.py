@@ -1,10 +1,9 @@
 import numpy as np
 from scipy import linalg
 from torch.nn.functional import adaptive_avg_pool2d
-
+import torch as th
 
 def calculate_activation_statistics(images, model, dims=4096, cuda=False):
-  model.eval()
   act = np.empty((len(images), dims))
 
   if cuda:
@@ -62,9 +61,13 @@ def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
 
 
 def calculate_fretchet(images_real, images_fake, model):
-  mu_1, std_1 = calculate_activation_statistics(images_real, model, cuda=True)
-  mu_2, std_2 = calculate_activation_statistics(images_fake, model, cuda=True)
+  model.eval()
+  with th.no_grad():
+    mu_1, std_1 = calculate_activation_statistics(images_real, model, cuda=True)
+    mu_2, std_2 = calculate_activation_statistics(images_fake, model, cuda=True)
 
-  """get fretched distance"""
-  fid_value = calculate_frechet_distance(mu_1, std_1, mu_2, std_2)
+    """get fretched distance"""
+    fid_value = calculate_frechet_distance(mu_1, std_1, mu_2, std_2)
+
+  model.train()
   return fid_value
