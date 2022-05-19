@@ -6,6 +6,8 @@ import torch.utils.data as data
 import matplotlib.pyplot as plt
 import numpy as np
 import torchvision.utils as vutils
+from tqdm import tqdm
+
 from experiments.evaluation import calculate_fretchet
 
 class Experiment:
@@ -60,7 +62,7 @@ class Experiment:
                     self.save_model_image(epoch)
 
     def epoch(self):
-        for (real, _) in self.dataloader:
+        for (real, _) in tqdm(self.dataloader, leave=False):
             real_image, fake_image, generator_error, discriminator_real_error = self.batch(real)
         fretchet_dist = calculate_fretchet(real_image, fake_image, self.discriminator) 
         return fretchet_dist, generator_error, discriminator_real_error

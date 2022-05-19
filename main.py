@@ -11,7 +11,7 @@ config = {
     'environment': 'local', # local / kaggle (TODO: Implement for Kaggle)
     'local_results_directory': './results',
     'experiment_name': 'v1',
-    'data_directory': './data/faces',
+    'data_directory': './data/faces_reduced',
     # network
     'noise_size': 100,
     'discriminator_feature_map_depth': 64,

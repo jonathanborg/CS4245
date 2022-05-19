@@ -5,11 +5,8 @@ import torch as th
 
 def calculate_activation_statistics(images, model, dims=4096, cuda=False):
   act = np.empty((len(images), dims))
-
-  if cuda:
-    batch = images.cuda()
-  else:
-    batch = images
+  device = th.device('cuda' if th.cuda.is_available() else 'cpu')
+  batch = images.to(device)
   pred = model(batch)
 
   # If model output is not scalar, apply global spatial average pooling.
