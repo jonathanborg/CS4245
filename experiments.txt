@@ -1,0 +1,10 @@
+v1:
+base version
+
+v2:
+gaussian noise
+smooth labes (0.9 on true)
+
+v2.5:
+200 noise vector instead of 100
+hard labels

@@ -64,7 +64,8 @@ class Experiment:
     def epoch(self):
         for (real, _) in tqdm(self.dataloader, leave=False):
             real_image, fake_image, generator_error, discriminator_real_error = self.batch(real)
-        fretchet_dist = calculate_fretchet(real_image, fake_image, self.discriminator) 
+        # fretchet_dist = calculate_fretchet(real_image, fake_image, self.discriminator) 
+        fretchet_dist = 0
         return fretchet_dist, generator_error, discriminator_real_error
 
 
