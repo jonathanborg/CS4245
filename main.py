@@ -14,6 +14,7 @@ config = {
     'data_directory': './data/faces_reduced',
     # network
     'noise_size': 200,
+    'noise_type': 'normal', # uniform / normal
     'discriminator_feature_map_depth': 64,
     'generator_feature_map_depth': 64,
     # training

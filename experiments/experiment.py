@@ -39,14 +39,14 @@ class Experiment:
         self.epochs = config['epochs']
         self.batch_size = config['batch_size']
         self.noise_size = config['noise_size']
+        self.noise_type = config['noise_type']
         self.save_checkpoint_every = config['save_checkpoint_every']
         self.save_image_every = config['save_image_every']
         self.true_label_value = config['true_label_value']
         self.fake_label_value = config['fake_label_value']
         # constants
         self.device = th.device('cuda' if th.cuda.is_available() else 'cpu')
-        self.noise_shape = (self.noise_size, 1, 1)
-        self.fixed_noise = th.normal(0, 1, size=(64, *self.noise_shape), device=self.device)
+        self.fixed_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
 
 
     def train(self):
@@ -79,7 +79,7 @@ class Experiment:
         discriminator_real_error = self.criterion(output, true_labels)
         discriminator_real_error.backward()
         # discriminator on fake images
-        noise = th.normal(0, 1, size=(batch_size, *self.noise_shape), device=self.device)
+        noise = th.randn(batch_size, self.noise_size, 1, 1, device=self.device)
         fake_images = self.generator(noise)
         fake_labels = th.full((batch_size, ), self.fake_label_value, dtype=th.float, device=self.device)
         output = self.discriminator(fake_images.detach()).view(-1)
@@ -112,7 +112,7 @@ class Experiment:
         image_path = f'{self.full_path}/{epoch}/images'
         if not os.path.isdir(image_path):
             os.mkdir(image_path)
-        random_noise = th.normal(0, 1, size=(64, *self.noise_shape), device=self.device)
+        random_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
         fixed_fakes = self.generator(self.fixed_noise).detach().cpu()
         random_fakes = self.generator(random_noise).detach().cpu()
         self.save_image_grid(fixed_fakes, f'{image_path}/fixed.png', 'Fixed Noise')
