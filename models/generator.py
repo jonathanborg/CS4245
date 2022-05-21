@@ -13,7 +13,7 @@ class GeneratorBlock(th.nn.Module):
         elif last:
             self.main = th.nn.Sequential(
                 th.nn.ConvTranspose2d(in_channels, out_channels, 4, 2, 1, bias=False),
-                th.nn.Sigmoid()
+                th.nn.Tanh()
             )
         else:
             self.main = th.nn.Sequential(

@@ -8,3 +8,10 @@ smooth labes (0.9 on true)
 v2.5:
 200 noise vector instead of 100
 hard labels
+
+v2.6
+removed eval
+sigmoid instead of tanh
+
+v2.6.2
+tanh again!
