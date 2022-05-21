@@ -10,10 +10,10 @@ config = {
     # environment
     'environment': 'local', # local / kaggle (TODO: Implement for Kaggle)
     'local_results_directory': './results',
-    'experiment_name': 'v2.6.2',
-    'data_directory': './data/faces_reduced',
+    'experiment_name': 'v2.6.3',
+    'data_directory': './data/faces',
     # network
-    'noise_size': 200,
+    'noise_size': 100,
     'noise_type': 'normal', # uniform / normal
     'discriminator_feature_map_depth': 64,
     'generator_feature_map_depth': 64,
@@ -21,7 +21,7 @@ config = {
     'save_checkpoint_every': 10,
     'save_image_every': 10,
     'batch_size': 128,
-    'epochs': 10,
+    'epochs': 1000,
     'discriminator_lr': 0.002,
     'discriminator_betas': (0.5, 0.999),
     'generator_lr': 0.002,
