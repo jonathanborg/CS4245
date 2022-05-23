@@ -15,3 +15,6 @@ sigmoid instead of tanh
 
 v2.6.2
 tanh again!
+
+v2.6.3
+exact same as v1, still collapsei
