@@ -12,6 +12,7 @@ config = {
     'local_results_directory': './results',
     'experiment_name': 'v2.6.3',
     'data_directory': './data/faces',
+    'evaluation': False,
     # network
     'noise_size': 100,
     'noise_type': 'normal', # uniform / normal
