@@ -28,6 +28,7 @@ class Experiment:
         if not os.path.isdir(self.results_path):
             os.mkdir(self.results_path)
         os.mkdir(self.full_path)
+        
         # store models, optimizers, criterion, and data
         self.generator = generator
         self.discriminator = discriminator
@@ -35,6 +36,7 @@ class Experiment:
         self.discriminator_optimizer = discriminator_optimizer
         self.criterion = criterion
         self.dataloader = dataloader
+
         # store data from config
         self.epochs = config['epochs']
         self.batch_size = config['batch_size']
@@ -44,6 +46,7 @@ class Experiment:
         self.save_image_every = config['save_image_every']
         self.true_label_value = config['true_label_value']
         self.fake_label_value = config['fake_label_value']
+
         # constants
         self.device = th.device('cuda' if th.cuda.is_available() else 'cpu')
         self.fixed_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
@@ -71,6 +74,7 @@ class Experiment:
 
     def batch(self, real: th.Tensor):
         self.discriminator_optimizer.zero_grad()
+
         # discriminator on real images
         real = real.to(self.device)
         batch_size = real.size(0)
@@ -78,6 +82,7 @@ class Experiment:
         output = self.discriminator(real).view(-1)
         discriminator_real_error = self.criterion(output, true_labels)
         discriminator_real_error.backward()
+
         # discriminator on fake images
         noise = th.randn(batch_size, self.noise_size, 1, 1, device=self.device)
         fake_images = self.generator(noise)
