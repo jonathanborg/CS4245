@@ -74,13 +74,12 @@ class Experiment:
         discriminator_real_error = 0
 
         for (real, _) in tqdm(self.dataloader, leave=False):
-            real_image, fake_image, curr_generator_error, curr_discriminator_real_error = self.batch(real)
+            real_image, fake_image, curr_generator_error, curr_discriminator_real_error, true_labels, fake_labels = self.batch(real)
             if self.evaluation:
-                curr_fretchet_dist, curr_recall, curr_precision = calculate_evaluation_metrics(real_image, fake_image, self.discriminator)
+                curr_fretchet_dist, curr_recall, curr_precision = calculate_evaluation_metrics(real_image, fake_image, true_labels, fake_labels, self.discriminator)
                 fretchet_dist += curr_fretchet_dist
                 recall += curr_recall
                 precision += curr_precision
-
             imgs_cnt += 1
             generator_error += curr_generator_error
             discriminator_real_error += curr_discriminator_real_error
@@ -92,7 +91,6 @@ class Experiment:
             recall /= imgs_cnt
             precision /= imgs_cnt
         return fretchet_dist, recall, precision, generator_error, discriminator_real_error
-
 
     def batch(self, real: th.Tensor):
         self.discriminator_optimizer.zero_grad()
@@ -120,7 +118,7 @@ class Experiment:
         generator_error = self.criterion(output, true_labels)
         generator_error.backward()
         self.generator_optimizer.step()
-        return real, fake_images, generator_error, discriminator_real_error
+        return real, fake_images, generator_error, discriminator_real_error, true_labels, fake_labels
 
     def save_model_checkpoint(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)
