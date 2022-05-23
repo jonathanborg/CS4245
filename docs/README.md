@@ -1,4 +1,4 @@
-# Towards the Automatic Anime Characters Creation with Generative Adversarial Networks
+# Animated Face Creation using Generative Adversarial Networks
 
 ## A Computer Vision by Deep Learning Study
 
