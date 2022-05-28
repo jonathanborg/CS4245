@@ -8,7 +8,7 @@ import numpy as np
 import torchvision.utils as vutils
 from tqdm import tqdm
 
-from experiments.evaluation import calculate_fretchet
+from experiments.evaluation import calculate_evaluation_metrics
 
 class Experiment:
     def __init__(self, 
@@ -28,6 +28,8 @@ class Experiment:
         if not os.path.isdir(self.results_path):
             os.mkdir(self.results_path)
         os.mkdir(self.full_path)
+        self.evaluation = config['evaluation']
+        
         # store models, optimizers, criterion, and data
         self.generator = generator
         self.discriminator = discriminator
@@ -35,6 +37,7 @@ class Experiment:
         self.discriminator_optimizer = discriminator_optimizer
         self.criterion = criterion
         self.dataloader = dataloader
+
         # store data from config
         self.epochs = config['epochs']
         self.batch_size = config['batch_size']
@@ -44,6 +47,7 @@ class Experiment:
         self.save_image_every = config['save_image_every']
         self.true_label_value = config['true_label_value']
         self.fake_label_value = config['fake_label_value']
+
         # constants
         self.device = th.device('cuda' if th.cuda.is_available() else 'cpu')
         self.fixed_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
@@ -51,8 +55,8 @@ class Experiment:
 
     def train(self):
         for epoch in range(self.epochs):
-            fretchet_dist, generator_error, discriminator_real_error = self.epoch()
-            print('[%d/%d]\tLoss_G: %.4f\tLoss_D: %.4f\tFretchet_Distance: %.4f' % (epoch+1, self.epochs, generator_error.item(), discriminator_real_error.item(),fretchet_dist))
+            fretchet_dist, recall, precision, generator_error, discriminator_real_error = self.epoch()
+            print('[%d/%d]\tLoss_G: %.4f\tLoss_D: %.4f\tFretchet_Distance: %.4f\tPrecision: %.4f\tRecall: %.4f' % (epoch+1, self.epochs, generator_error.item(), discriminator_real_error.item(),fretchet_dist, precision, recall))
             with th.no_grad():
                 if epoch % self.save_checkpoint_every == 0:
                     print('-> Saving model checkpoint')
@@ -62,15 +66,35 @@ class Experiment:
                     self.save_model_image(epoch)
 
     def epoch(self):
-        for (real, _) in tqdm(self.dataloader, leave=False):
-            real_image, fake_image, generator_error, discriminator_real_error = self.batch(real)
-        # fretchet_dist = calculate_fretchet(real_image, fake_image, self.discriminator) 
         fretchet_dist = 0
-        return fretchet_dist, generator_error, discriminator_real_error
+        recall = 0
+        precision = 0
+        imgs_cnt = 0
+        generator_error = 0
+        discriminator_real_error = 0
 
+        for (real, _) in tqdm(self.dataloader, leave=False):
+            real_image, fake_image, curr_generator_error, curr_discriminator_real_error, true_labels, fake_labels = self.batch(real)
+            if self.evaluation:
+                curr_fretchet_dist, curr_recall, curr_precision = calculate_evaluation_metrics(real_image, fake_image, true_labels, fake_labels, self.discriminator)
+                fretchet_dist += curr_fretchet_dist
+                recall += curr_recall
+                precision += curr_precision
+            imgs_cnt += 1
+            generator_error += curr_generator_error
+            discriminator_real_error += curr_discriminator_real_error
+        # Averaging over all epochs
+        generator_error /= imgs_cnt
+        discriminator_real_error /= imgs_cnt
+        if self.evaluation:
+            fretchet_dist /= imgs_cnt
+            recall /= imgs_cnt
+            precision /= imgs_cnt
+        return fretchet_dist, recall, precision, generator_error, discriminator_real_error
 
     def batch(self, real: th.Tensor):
         self.discriminator_optimizer.zero_grad()
+
         # discriminator on real images
         real = real.to(self.device)
         batch_size = real.size(0)
@@ -78,6 +102,7 @@ class Experiment:
         output = self.discriminator(real).view(-1)
         discriminator_real_error = self.criterion(output, true_labels)
         discriminator_real_error.backward()
+
         # discriminator on fake images
         noise = th.randn(batch_size, self.noise_size, 1, 1, device=self.device)
         fake_images = self.generator(noise)
@@ -93,7 +118,7 @@ class Experiment:
         generator_error = self.criterion(output, true_labels)
         generator_error.backward()
         self.generator_optimizer.step()
-        return real, fake_images, generator_error, discriminator_real_error
+        return real, fake_images, generator_error, discriminator_real_error, true_labels, fake_labels
 
     def save_model_checkpoint(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)
