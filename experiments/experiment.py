@@ -42,7 +42,6 @@ class Experiment:
         self.epochs = config['epochs']
         self.batch_size = config['batch_size']
         self.noise_size = config['noise_size']
-        self.noise_type = config['noise_type']
         self.save_checkpoint_every = config['save_checkpoint_every']
         self.save_image_every = config['save_image_every']
         self.true_label_value = config['true_label_value']
