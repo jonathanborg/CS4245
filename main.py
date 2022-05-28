@@ -13,6 +13,7 @@ config = {
     'experiment_name': 'v2.6.3',
     'data_directory': './data/faces',
     'evaluation': True,
+    'num_workers': 8,
     # network
     'noise_size': 100,
     'noise_type': 'normal', # uniform / normal
@@ -38,7 +39,7 @@ transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
     ])
 dataset = torchvision.datasets.ImageFolder(config['data_directory'], transform=transform)
-dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True)
+dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True, num_workers=config['num_workers'])
 # create networks
 generator = Generator(
     config['noise_size'],
