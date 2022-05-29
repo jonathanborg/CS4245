@@ -10,12 +10,12 @@ config = {
     # environment
     'environment': 'local', # local / kaggle (TODO: Implement for Kaggle)
     'local_results_directory': './results',
-    'experiment_name': 'v2.6.3',
+    'experiment_name': 'v1',
     'data_directory': './data/faces',
     'evaluation': True,
+    'num_workers': 8,
     # network
     'noise_size': 100,
-    'noise_type': 'normal', # uniform / normal
     'discriminator_feature_map_depth': 64,
     'generator_feature_map_depth': 64,
     # training
@@ -38,7 +38,7 @@ transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
     ])
 dataset = torchvision.datasets.ImageFolder(config['data_directory'], transform=transform)
-dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True)
+dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True, num_workers=config['num_workers'])
 # create networks
 generator = Generator(
     config['noise_size'],
