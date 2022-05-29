@@ -10,9 +10,9 @@ config = {
     # environment
     'environment': 'local', # local / kaggle (TODO: Implement for Kaggle)
     'local_results_directory': './results',
-    'experiment_name': 'v1',
+    'experiment_name': 'v1_evaluation',
     'data_directory': './data/faces',
-    'evaluation': False,
+    'evaluation': True,
     'num_workers': 8,
     # network
     'noise_size': 100,
