@@ -10,9 +10,9 @@ config = {
     # environment
     'environment': 'local', # local / kaggle (TODO: Implement for Kaggle)
     'local_results_directory': './results',
-    'experiment_name': 'v1',
+    'experiment_name': 'v1_evaluation',
     'data_directory': './data/faces',
-    'evaluation': True,
+    'evaluation': False,
     'num_workers': 8,
     # network
     'noise_size': 100,
@@ -36,8 +36,10 @@ device = th.device('cuda' if th.cuda.is_available() else 'cpu')
 # create dataset
 transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
+        torchvision.transforms.RandomVerticalFlip()
     ])
 dataset = torchvision.datasets.ImageFolder(config['data_directory'], transform=transform)
+print(len(dataset))
 dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True, num_workers=config['num_workers'])
 # create networks
 generator = Generator(

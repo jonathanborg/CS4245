@@ -109,14 +109,16 @@ class Experiment:
         output = self.discriminator(fake_images.detach()).view(-1)
         discriminator_fake_error = self.criterion(output, fake_labels)
         discriminator_fake_error.backward()
-        # optimizer step
+        # discrminiator optimizer step
         self.discriminator_optimizer.step()
+
         # generator
         self.generator_optimizer.zero_grad()
         output = self.discriminator(fake_images).view(-1)
         generator_error = self.criterion(output, true_labels)
         generator_error.backward()
         self.generator_optimizer.step()
+        
         return real, fake_images, generator_error, discriminator_real_error, true_labels, fake_labels
 
     def save_model_checkpoint(self, epoch: int) -> None:
