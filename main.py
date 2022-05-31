@@ -38,7 +38,6 @@ transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
     ])
 dataset = torchvision.datasets.ImageFolder(config['data_directory'], transform=transform)
-print(len(dataset))
 dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True, num_workers=config['num_workers'])
 # create networks
 generator = Generator(
