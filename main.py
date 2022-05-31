@@ -35,6 +35,7 @@ config = {
 device = th.device('cuda' if th.cuda.is_available() else 'cpu')
 # create dataset
 transform = torchvision.transforms.Compose([
+        torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.ToTensor(),
     ])
 dataset = torchvision.datasets.ImageFolder(config['data_directory'], transform=transform)
