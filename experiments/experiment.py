@@ -81,7 +81,7 @@ class Experiment:
 
             loss_string = f'Loss_G: {generator_error:.4f}\tReal_Loss_D: {real_error:.4f}\tFake_Loss_D: {fake_error:.4f}'
             accuracy_string = f'Accuracy_G: {generator_accuracy:.4f}\tReal_Accuracy_D: {real_accuracy:.4f}\tFake_Accuracy_D: {fake_accuracy:.4f}'
-            print(f'{epoch+1}/{self.epochs}: FID: {fid}\t{loss_string}\t{accuracy_string}')
+            print(f'{epoch+1}/{self.epochs}: FID: {fid:.4f}\t{loss_string}\t{accuracy_string}')
 
             self.model_metrics['epochs'].append(epoch)
             self.model_metrics['fid'].append(fid)
