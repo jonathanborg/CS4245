@@ -7,10 +7,10 @@ config = {
     # environment
     'environment': 'local',
     'local_results_directory': './results',
-    'experiment_name': 'v1',
+    'experiment_name': 'v1_loss',
     'data_directory': './data/faces',
     'evaluation': True,
-    'num_workers': 0,
+    'num_workers': 8,
 
     # network
     'noise_size': 100,
@@ -19,9 +19,9 @@ config = {
     'generator_feature_map_depth': 64,
 
     # training
-    'save_checkpoint_every': 10,
-    'save_image_every': 10,
-    'save_metrics_every': 10,
+    'save_checkpoint_every': 3,
+    'save_image_every': 3,
+    'save_metrics_every': 3,
     'batch_size': 64,
     'epochs': 101,
     'discriminator_lr': 0.002,
