@@ -8,9 +8,9 @@ config = {
     'environment': 'local',
     'local_results_directory': './results',
     'experiment_name': 'v1_loss',
-    'data_directory': './data/faces',
+    'data_directory': './data/faces_reduced',
     'evaluation': True,
-    'num_workers': 8,
+    'num_workers': 0,
 
     # network
     'noise_size': 100,
