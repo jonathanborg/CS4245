@@ -285,7 +285,7 @@ class Training:
             fid = evaluation.calculate_fretchet(real_images, fake_images, self.critic)
             self.critic.train()
 
-        real_correct = (real_labels == real_predicted.round()).sum().item()
-        fake_correct = (fake_labels == fake_predicted.round()).sum().item()
-        generator_correct = (real_labels == generator_fake_predicted.round()).sum().item()
+        real_correct = real_predicted.sum().item()
+        fake_correct = fake_predicted.sum().item()
+        generator_correct = generator_fake_predicted.sum().item()
         return fid, real_correct, fake_correct, generator_correct
