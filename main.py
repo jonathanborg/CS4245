@@ -14,7 +14,7 @@ config = {
     'data_directory': './data/faces_reduced',
     'evaluation': False,
     'num_workers': 0,
-    'augmentation': True,
+    'augmentation': False,
     # network
     'noise_size': 100,
     'discriminator_feature_map_depth': 64,
