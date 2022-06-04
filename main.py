@@ -6,8 +6,6 @@ from models import Generator, Discriminator
 from utils import weights_init
 from experiments import Experiment
 
-import sys
-
 config = {
     # environment
     'environment': 'local', # local / kaggle (TODO: Implement for Kaggle)
