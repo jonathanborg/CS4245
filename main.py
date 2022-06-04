@@ -82,7 +82,6 @@ if config['model_name'] == 'dcgan':
     criterion = th.nn.BCELoss(reduction='sum')
     # create experiment
     experiment = Experiment(config, generator, discriminator, generator_optimizer, discriminator_optimizer, criterion, dataloader)
-    print('Training dcgan')
     experiment.train()
 
 

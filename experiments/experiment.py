@@ -131,7 +131,7 @@ class Experiment:
         batch_size = real_images.size(0)
         real_labels = th.full((batch_size, ), self.true_label_value, dtype=th.float, device=self.device)
         real_predicted = self.discriminator(real_images).view(-1)
-        discriminator_real_error = self.criterion(real_predicted, real_labels)
+        discriminator_real_error = th.log(real_predicted).sum() #self.criterion(real_predicted, real_labels)
         discriminator_real_error.backward()
 
         # discriminator on fake images
@@ -139,7 +139,7 @@ class Experiment:
         fake_images = self.generator(noise)
         fake_labels = th.full((batch_size, ), self.fake_label_value, dtype=th.float, device=self.device)
         fake_predicted = self.discriminator(fake_images.detach()).view(-1)
-        discriminator_fake_error = self.criterion(fake_predicted, fake_labels)
+        discriminator_fake_error = th.log(1 - fake_predicted).sum() #self.criterion(fake_predicted, fake_labels)
         discriminator_fake_error.backward()
         # discrminiator optimizer step
         self.discriminator_optimizer.step()
@@ -147,7 +147,7 @@ class Experiment:
         # generator
         self.generator_optimizer.zero_grad()
         generator_fake_predicted = self.discriminator(fake_images).view(-1)
-        generator_error = self.criterion(generator_fake_predicted, real_labels)
+        generator_error = th.log(1 - generator_fake_predicted).sum() #self.criterion(generator_fake_predicted, real_labels)
         generator_error.backward()
         self.generator_optimizer.step()
         
