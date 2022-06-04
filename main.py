@@ -14,6 +14,7 @@ config = {
     'data_directory': './data/faces_reduced',
     'evaluation': False,
     'num_workers': 0,
+    'augmentation': True,
     # network
     'noise_size': 100,
     'discriminator_feature_map_depth': 64,
@@ -37,9 +38,17 @@ config = {
 # create device
 device = th.device('cuda' if th.cuda.is_available() else 'cpu')
 # create dataset
-transform = torchvision.transforms.Compose([
+if config['augmentation']:
+    transforms = [
+        torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.ToTensor(),
-    ])
+    ]
+else:
+    transforms = [
+        torchvision.transforms.ToTensor(),
+    ]
+
+transform = torchvision.transforms.Compose(transforms)
 dataset = torchvision.datasets.ImageFolder(config['data_directory'], transform=transform)
 dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True, num_workers=config['num_workers'])
 # create networks
