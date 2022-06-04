@@ -19,3 +19,4 @@ urllib3
 scipy
 tqdm
 pytorch-ignite
+zipfile36
