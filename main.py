@@ -21,7 +21,7 @@ config = {
     # training
     'save_checkpoint_every': 10,
     'save_image_every': 10,
-    'save_stats_every': 10,
+    'save_metrics_every': 10,
     'batch_size': 8,
     'epochs': 1000,
     'discriminator_lr': 0.002,

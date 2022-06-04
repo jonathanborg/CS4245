@@ -47,7 +47,7 @@ class Experiment:
         self.noise_size = config['noise_size']
         self.save_checkpoint_every = config['save_checkpoint_every']
         self.save_image_every = config['save_image_every']
-        self.save_stats_every = config['save_stats_every']
+        self.save_metrics_every = config['save_metrics_every']
         self.true_label_value = config['true_label_value']
         self.fake_label_value = config['fake_label_value']
 
@@ -69,10 +69,9 @@ class Experiment:
             fake_error = total_fake_error / self.datasize
             generator_error = total_generator_error / self.datasize
 
-            loss_string = f'\tLoss_G: {generator_error:.4f}\tReal_Loss_D: {real_error:.4f}\tFake_Loss_D: {fake_error:.4f}'
-            accuracy_string = f'\tAccuracy_G: {generator_accuracy:.4f}\tReal_Accuracy_D: {real_accuracy:.4f}\tFake_Accuracy_D: {fake_accuracy:.4f}'
-            print(f'{epoch+1}/{self.epochs}:{loss_string}{accuracy_string}')
-            # print('[%d/%d]\tLoss_G: %.4f\tLoss_D: %.4f\tFretchet_Distance: %.4f\tPrecision: %.4f\tRecall: %.4f' % (epoch+1, self.epochs, generator_error.item(), discriminator_real_error.item(),fretchet_dist, precision, recall))
+            loss_string = f'Loss_G: {generator_error:.4f}\tReal_Loss_D: {real_error:.4f}\tFake_Loss_D: {fake_error:.4f}'
+            accuracy_string = f'Accuracy_G: {generator_accuracy:.4f}\tReal_Accuracy_D: {real_accuracy:.4f}\tFake_Accuracy_D: {fake_accuracy:.4f}'
+            print(f'{epoch+1}/{self.epochs}: FID: {fid}\t{loss_string}\t{accuracy_string}')
             with th.no_grad():
                 if epoch % self.save_checkpoint_every == 0:
                     print('-> Saving model checkpoint')
@@ -80,8 +79,9 @@ class Experiment:
                 if epoch % self.save_image_every == 0:
                     print('-> Saving model images')
                     self.save_model_image(epoch)
-                if epoch % self.save_stats_every == 0:
-                    print('Sacving sats stats!!!')
+                if epoch % self.save_metrics_every == 0:
+                    print('-> Saving metrics')
+                    self.save_model_metrics(epoch, real_accuracy, fake_accuracy, generator_accuracy, fid, real_error, fake_error, generator_error)
 
     def epoch(self):
         total_fid = 0
@@ -132,7 +132,6 @@ class Experiment:
         generator_error.backward()
         self.generator_optimizer.step()
         
-
         fid, real_correct, fake_correct, generator_correct = self.metrics(real_images, fake_images, real_labels, fake_labels, real_predicted, fake_predicted, generator_fake_predicted)
         return discriminator_real_error.item(), discriminator_fake_error.item(), generator_error.item(), fid, real_correct, fake_correct, generator_correct
 
@@ -159,6 +158,9 @@ class Experiment:
             'discriminator_optimizer_state_dict': self.discriminator_optimizer.state_dict(),
         }, f'{checkpoint_path}/checkpoint.th')
         
+
+    def save_model_metrics(self, epoch: int) -> None:
+        self.make_epoch_directories(epoch)    
 
     def save_model_image(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)
