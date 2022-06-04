@@ -8,7 +8,7 @@ config = {
     'environment': 'local',
     'local_results_directory': './results',
     'experiment_name': 'v1',
-    'data_directory': './data/faces',
+    'data_directory': './data/faces_reduced',
     'evaluation': True,
     'num_workers': 0,
 
