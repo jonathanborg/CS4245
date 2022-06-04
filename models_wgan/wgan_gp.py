@@ -139,6 +139,8 @@ class Training:
         self.results_path = config['local_results_directory']
         self.experiment_name = config['experiment_name']
         self.full_path = f'{self.results_path}/{self.experiment_name}'
+        if not os.path.isdir(self.full_path):
+            os.mkdir(self.full_path)
         self.evaluation = config['evaluation']
 
         # store models, optimizers, criterion, and data
