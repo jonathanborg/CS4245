@@ -90,9 +90,3 @@ def calculate_precision_recall(real_image, fake_image):
 
   state = default_evaluator.run([[fake_image, real_image]])
   return state.metrics
-
-
-def calculate_evaluation_metrics(images_real, images_fake, true_labels, fake_labels, model):
-  fid = calculate_fretchet(images_real, images_fake, model)
-  metrics = calculate_precision_recall(real_image=true_labels, fake_image=fake_labels)
-  return fid, metrics["recall"], metrics["precision"]
