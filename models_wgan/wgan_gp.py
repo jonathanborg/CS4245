@@ -234,6 +234,8 @@ class Training:
                     total_real_correct += real_correct
                     total_fake_correct += fake_correct
                     total_generator_correct += generator_correct
+                    total_real_error += loss_critic.item()
+                    total_generator_error += loss_generator.item()
 
                     evaluation_outcomes.append(
                         [total_fid, total_real_error, total_fake_error, total_generator_error, total_real_correct,
