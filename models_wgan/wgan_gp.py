@@ -10,7 +10,6 @@ import numpy as np
 from tqdm import tqdm
 
 from experiments import evaluation
-from experiments.evaluation import calculate_evaluation_metrics
 from utils.utils import SaveModel
 
 """
