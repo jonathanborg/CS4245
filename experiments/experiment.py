@@ -9,6 +9,9 @@ import torchvision.utils as vutils
 from tqdm import tqdm
 
 from experiments.evaluation import calculate_evaluation_metrics
+import experiments.evaluation as evaluation
+
+import sys
 
 class Experiment:
     def __init__(self, 
@@ -44,18 +47,32 @@ class Experiment:
         self.noise_size = config['noise_size']
         self.save_checkpoint_every = config['save_checkpoint_every']
         self.save_image_every = config['save_image_every']
+        self.save_stats_every = config['save_stats_every']
         self.true_label_value = config['true_label_value']
         self.fake_label_value = config['fake_label_value']
 
         # constants
         self.device = th.device('cuda' if th.cuda.is_available() else 'cpu')
         self.fixed_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
+        self.datasize = len(self.dataloader.dataset)
 
 
     def train(self):
         for epoch in range(self.epochs):
-            fretchet_dist, recall, precision, generator_error, discriminator_real_error = self.epoch()
-            print('[%d/%d]\tLoss_G: %.4f\tLoss_D: %.4f\tFretchet_Distance: %.4f\tPrecision: %.4f\tRecall: %.4f' % (epoch+1, self.epochs, generator_error.item(), discriminator_real_error.item(),fretchet_dist, precision, recall))
+            total_fid, total_real_error, total_fake_error, total_generator_error, total_real_correct, total_fake_correct, total_generator_correct = self.epoch()
+            # metric calculation
+            real_accuracy = total_fake_correct / self.datasize
+            fake_accuracy = total_real_correct / self.datasize
+            generator_accuracy = total_generator_correct / self.datasize
+            fid = total_fid / self.datasize
+            real_error = total_real_error / self.datasize
+            fake_error = total_fake_error / self.datasize
+            generator_error = total_generator_error / self.datasize
+
+            loss_string = f'\tLoss_G: {generator_error:.4f}\tReal_Loss_D: {real_error:.4f}\tFake_Loss_D: {fake_error:.4f}'
+            accuracy_string = f'\tAccuracy_G: {generator_accuracy:.4f}\tReal_Accuracy_D: {real_accuracy:.4f}\tFake_Accuracy_D: {fake_accuracy:.4f}'
+            print(f'{epoch+1}/{self.epochs}:{loss_string}{accuracy_string}')
+            # print('[%d/%d]\tLoss_G: %.4f\tLoss_D: %.4f\tFretchet_Distance: %.4f\tPrecision: %.4f\tRecall: %.4f' % (epoch+1, self.epochs, generator_error.item(), discriminator_real_error.item(),fretchet_dist, precision, recall))
             with th.no_grad():
                 if epoch % self.save_checkpoint_every == 0:
                     print('-> Saving model checkpoint')
@@ -63,63 +80,73 @@ class Experiment:
                 if epoch % self.save_image_every == 0:
                     print('-> Saving model images')
                     self.save_model_image(epoch)
+                if epoch % self.save_stats_every == 0:
+                    print('Sacving sats stats!!!')
 
     def epoch(self):
-        fretchet_dist = 0
-        recall = 0
-        precision = 0
-        imgs_cnt = 0
-        generator_error = 0
-        discriminator_real_error = 0
-
+        total_fid = 0
+        total_real_error = 0
+        total_fake_error = 0
+        total_generator_error = 0
+        total_real_correct = 0
+        total_fake_correct = 0
+        total_generator_correct= 0 
         for (real, _) in tqdm(self.dataloader, leave=False):
-            real_image, fake_image, curr_generator_error, curr_discriminator_real_error, true_labels, fake_labels = self.batch(real)
-            if self.evaluation:
-                curr_fretchet_dist, curr_recall, curr_precision = calculate_evaluation_metrics(real_image, fake_image, true_labels, fake_labels, self.discriminator)
-                fretchet_dist += curr_fretchet_dist
-                recall += curr_recall
-                precision += curr_precision
-            imgs_cnt += 1
-            generator_error += curr_generator_error
-            discriminator_real_error += curr_discriminator_real_error
-        # Averaging over all epochs
-        generator_error /= imgs_cnt
-        discriminator_real_error /= imgs_cnt
-        if self.evaluation:
-            fretchet_dist /= imgs_cnt
-            recall /= imgs_cnt
-            precision /= imgs_cnt
-        return fretchet_dist, recall, precision, generator_error, discriminator_real_error
+            real_error, fake_error, generator_error, fid, real_correct, fake_correct, generator_correct = self.batch(real)
 
-    def batch(self, real: th.Tensor):
+            total_fid += fid
+            total_real_error += real_error
+            total_fake_error += fake_error
+            total_generator_error += generator_error
+            total_real_correct += real_correct
+            total_fake_correct += fake_correct
+            total_generator_correct += generator_correct
+
+        return total_fid, total_real_error, total_fake_error, total_generator_error, total_real_correct, total_fake_correct, total_generator_correct
+
+    def batch(self, real_images: th.Tensor):
         self.discriminator_optimizer.zero_grad()
 
         # discriminator on real images
-        real = real.to(self.device)
-        batch_size = real.size(0)
-        true_labels = th.full((batch_size, ), self.true_label_value, dtype=th.float, device=self.device)
-        output = self.discriminator(real).view(-1)
-        discriminator_real_error = self.criterion(output, true_labels)
+        real_images = real_images.to(self.device)
+        batch_size = real_images.size(0)
+        real_labels = th.full((batch_size, ), self.true_label_value, dtype=th.float, device=self.device)
+        real_predicted = self.discriminator(real_images).view(-1)
+        discriminator_real_error = self.criterion(real_predicted, real_labels)
         discriminator_real_error.backward()
 
         # discriminator on fake images
         noise = th.randn(batch_size, self.noise_size, 1, 1, device=self.device)
         fake_images = self.generator(noise)
         fake_labels = th.full((batch_size, ), self.fake_label_value, dtype=th.float, device=self.device)
-        output = self.discriminator(fake_images.detach()).view(-1)
-        discriminator_fake_error = self.criterion(output, fake_labels)
+        fake_predicted = self.discriminator(fake_images.detach()).view(-1)
+        discriminator_fake_error = self.criterion(fake_predicted, fake_labels)
         discriminator_fake_error.backward()
         # discrminiator optimizer step
         self.discriminator_optimizer.step()
 
         # generator
         self.generator_optimizer.zero_grad()
-        output = self.discriminator(fake_images).view(-1)
-        generator_error = self.criterion(output, true_labels)
+        generator_fake_predicted = self.discriminator(fake_images).view(-1)
+        generator_error = self.criterion(generator_fake_predicted, real_labels)
         generator_error.backward()
         self.generator_optimizer.step()
         
-        return real, fake_images, generator_error, discriminator_real_error, true_labels, fake_labels
+
+        fid, real_correct, fake_correct, generator_correct = self.metrics(real_images, fake_images, real_labels, fake_labels, real_predicted, fake_predicted, generator_fake_predicted)
+        return discriminator_real_error.item(), discriminator_fake_error.item(), generator_error.item(), fid, real_correct, fake_correct, generator_correct
+
+    def metrics(self, real_images, fake_images, real_labels, fake_labels, real_predicted, fake_predicted, generator_fake_predicted):
+        # fid calculation
+        with th.no_grad():
+            self.discriminator.eval()
+            fid = evaluation.calculate_fretchet(real_images, fake_images, self.discriminator)
+            self.discriminator.train()
+
+        real_correct = (real_labels == real_predicted.round()).sum()
+        fake_correct = (fake_labels == fake_predicted.round()).sum()
+        generator_correct = (real_labels == generator_fake_predicted.round()).sum()
+        return fid, real_correct, fake_correct, generator_correct
 
     def save_model_checkpoint(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)

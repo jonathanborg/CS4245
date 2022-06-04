@@ -10,7 +10,7 @@ config = {
     # environment
     'environment': 'local', # local / kaggle (TODO: Implement for Kaggle)
     'local_results_directory': './results',
-    'experiment_name': 'loaded_2',
+    'experiment_name': 'test',
     'data_directory': './data/faces_reduced',
     'evaluation': False,
     'num_workers': 0,
@@ -21,7 +21,8 @@ config = {
     # training
     'save_checkpoint_every': 10,
     'save_image_every': 10,
-    'batch_size': 128,
+    'save_stats_every': 10,
+    'batch_size': 8,
     'epochs': 1000,
     'discriminator_lr': 0.002,
     'discriminator_betas': (0.5, 0.999),
@@ -30,7 +31,7 @@ config = {
     'true_label_value': 1,
     'fake_label_value': 0,
     # load model
-    'trained_model': './results/loaded/40/checkpoint.th'
+    'trained_model': None #'./results/loaded/40/checkpoint.th'
 }
 
 # create device
