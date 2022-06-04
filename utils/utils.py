@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import torchvision.utils as vutils
 import numpy as np
 import os
-
+import csv
 
 def weights_init(model):
     classname = model.__class__.__name__
@@ -46,6 +46,14 @@ class SaveModel:
         random_fakes = self.generator(random_noise).detach().cpu()
         self.save_image_grid(fixed_fakes, f'{image_path}/fixed.png', 'Fixed Noise')
         self.save_image_grid(random_fakes, f'{image_path}/random.png', 'Random Noise')
+
+    def save_model_metrics(self, epoch: int, model_metrics) -> None:
+        self.make_epoch_directories(epoch)
+        metrics_path = f'{self.full_path}/{epoch}/metrics.csv'
+        with open(metrics_path, 'w+') as f:
+            writer = csv.writer(f)
+            writer.writerow(model_metrics.keys())
+            writer.writerows(zip(*model_metrics.values()))
 
     def save_image_grid(self, images, path: str, title: str) -> None:
         plt.figure(figsize=(8, 8))

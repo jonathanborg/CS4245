@@ -155,6 +155,7 @@ class Training:
         self.noise_size = config['noise_size']
         self.save_checkpoint_every = config['save_checkpoint_every']
         self.save_image_every = config['save_image_every']
+        self.save_metrics_every = config['save_metrics_every']
         self.true_label_value = config['true_label_value']
         self.fake_label_value = config['fake_label_value']
 
@@ -169,6 +170,16 @@ class Training:
         self.saving = SaveModel(generator, critic, generator_optimizer, critic_optimizer, self.full_path,
                                 config['noise_size'], device, self.fixed_noise)
         self.datasize = len(self.dataloader.dataset)
+        self.model_metrics = {
+            'epochs': [],
+            'fid': [],
+            'loss_g': [],
+            'loss_d_real': [],
+            'loss_d_fake': [],
+            'accuracy_g': [],
+            'accuracy_d_real': [],
+            'accuracy_d_fake': []
+        }
 
     def train(self):
         evaluation_outcomes = []
@@ -240,6 +251,15 @@ class Training:
             accuracy_string = f'Accuracy_G: {generator_accuracy:.4f}\tReal_Accuracy_D: {real_accuracy:.4f}\tFake_Accuracy_D: {fake_accuracy:.4f}'
             print(f'{epoch + 1}/{self.epochs}: FID: {fid}\t{loss_string}\t{accuracy_string}')
 
+            self.model_metrics['epochs'].append(epoch)
+            self.model_metrics['fid'].append(fid)
+            self.model_metrics['loss_g'].append(generator_error)
+            self.model_metrics['loss_d_real'].append(real_error)
+            self.model_metrics['loss_d_fake'].append(fake_error)
+            self.model_metrics['accuracy_g'].append(generator_accuracy)
+            self.model_metrics['accuracy_d_real'].append(real_accuracy)
+            self.model_metrics['accuracy_d_fake'].append(fake_accuracy)
+
             # SAVE MODEL AND IMAGES
             if epoch % self.save_checkpoint_every == 0:
                 print('-> Saving model checkpoint')
@@ -248,6 +268,10 @@ class Training:
             if epoch % self.save_image_every == 0:
                 print('-> Saving model images')
                 self.saving.save_model_image(epoch)
+
+            if epoch % self.save_metrics_every == 0:
+                print('-> Saving metrics')
+                self.saving.save_model_metrics(epoch, self.model_metrics)
 
         return evaluation_outcomes
 
