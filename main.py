@@ -6,14 +6,16 @@ from models import Generator, Discriminator
 from utils import weights_init
 from experiments import Experiment
 
+import sys
+
 config = {
     # environment
     'environment': 'local', # local / kaggle (TODO: Implement for Kaggle)
     'local_results_directory': './results',
-    'experiment_name': 'v1',
-    'data_directory': './data/faces',
+    'experiment_name': 'loaded_2',
+    'data_directory': './data/faces_reduced',
     'evaluation': False,
-    'num_workers': 8,
+    'num_workers': 0,
     # network
     'noise_size': 100,
     'discriminator_feature_map_depth': 64,
@@ -29,6 +31,8 @@ config = {
     'generator_betas': (0.5, 0.999),
     'true_label_value': 1,
     'fake_label_value': 0,
+    # load model
+    'trained_model': './results/loaded/40/checkpoint.th'
 }
 
 # create device
@@ -53,6 +57,11 @@ discriminator.apply(weights_init)
 # create optimizers
 discriminator_optimizer = th.optim.Adam(discriminator.parameters(), lr=config['discriminator_lr'], betas=config['discriminator_betas'])
 generator_optimizer = th.optim.Adam(generator.parameters(), lr=config['generator_lr'], betas=config['generator_betas'])
+# loading models
+if 'trained_model' in config and config['trained_model']:
+    checkpoint = th.load(config['trained_model'], map_location=device)
+    generator.load_state_dict(checkpoint['generator_model_state_dict'])
+    discriminator.load_state_dict(checkpoint['discriminator_model_state_dict'])
 # create loss
 criterion = th.nn.BCELoss()
 # create experiment

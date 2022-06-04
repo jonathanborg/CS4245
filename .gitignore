@@ -133,3 +133,5 @@ generator_results
 results
 
 .DS_Store
+
+trained_models
