@@ -61,15 +61,12 @@ def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
 
 
 def calculate_fretchet(images_real, images_fake, model):
-  model.eval()
-  with th.no_grad():
-    mu_1, std_1 = calculate_activation_statistics(images_real, model)
-    mu_2, std_2 = calculate_activation_statistics(images_fake, model)
+  mu_1, std_1 = calculate_activation_statistics(images_real, model)
+  mu_2, std_2 = calculate_activation_statistics(images_fake, model)
 
-    """get fretched distance"""
-    fid_value = calculate_frechet_distance(mu_1, std_1, mu_2, std_2)
+  """get fretched distance"""
+  fid_value = calculate_frechet_distance(mu_1, std_1, mu_2, std_2)
 
-  model.train()
   return fid_value
 
 
