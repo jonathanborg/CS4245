@@ -7,7 +7,7 @@ config = {
     # environment
     'environment': 'local',
     'local_results_directory': './results',
-    'experiment_name': 'v1.6',
+    'experiment_name': 'v1',
     'data_directory': './data/faces_reduced',
     'evaluation': True,
     'num_workers': 0,
@@ -79,7 +79,7 @@ if config['model_name'] == 'dcgan':
     generator_optimizer = th.optim.Adam(generator.parameters(), lr=config['generator_lr'], betas=config['generator_betas'])
 
     # create loss
-    criterion = th.nn.BCELoss()
+    criterion = th.nn.BCELoss(reduction='sum')
     # create experiment
     experiment = Experiment(config, generator, discriminator, generator_optimizer, discriminator_optimizer, criterion, dataloader)
     print('Training dcgan')
