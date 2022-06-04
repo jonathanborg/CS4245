@@ -10,7 +10,7 @@ config = {
     # environment
     'environment': 'local', # local / kaggle (TODO: Implement for Kaggle)
     'local_results_directory': './results',
-    'experiment_name': 'test',
+    'experiment_name': 'v1.3',
     'data_directory': './data/faces_reduced',
     'evaluation': False,
     'num_workers': 0,
