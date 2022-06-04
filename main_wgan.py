@@ -29,8 +29,8 @@ config = {
     'generator_feature_map_depth': 64,
 
     # training
-    'save_checkpoint_every': 10,
-    'save_image_every': 10,
+    'save_checkpoint_every': 5,
+    'save_image_every': 5,
     'batch_size': 64,
     'epochs': 1000,
     'discriminator_lr': 5e-5,
@@ -48,6 +48,8 @@ config = {
 
 # create device
 device = th.device('cuda' if th.cuda.is_available() else 'cpu')
+print("device:", device)
+print("is cuda available: ", th.cuda.is_available())
 
 # create dataset
 transform = torchvision.transforms.Compose([
@@ -121,6 +123,7 @@ def save_image_grid(images, path: str, title: str) -> None:
 
 
 # TRAINING LOOP
+
 for epoch in range(config['epochs']):
     print('EPOCH: ', epoch)
     for batch_idx, (real, _) in enumerate(dataloader):
@@ -158,7 +161,7 @@ for epoch in range(config['epochs']):
     if epoch % config['save_checkpoint_every'] == 0:
         print('-> Saving model checkpoint')
         save_model_checkpoint(epoch)
-    
+
     if epoch % config['save_image_every'] == 0:
         print('-> Saving model images')
         save_model_image(epoch)
