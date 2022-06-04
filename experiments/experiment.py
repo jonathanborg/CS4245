@@ -10,8 +10,7 @@ from tqdm import tqdm
 
 from experiments.evaluation import calculate_evaluation_metrics
 import experiments.evaluation as evaluation
-
-import sys
+import csv
 
 class Experiment:
     def __init__(self, 
@@ -56,6 +55,17 @@ class Experiment:
         self.fixed_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
         self.datasize = len(self.dataloader.dataset)
 
+        self.model_metrics = {
+            'epochs': [],
+            'fid': [],
+            'loss_g': [],
+            'loss_d_real': [],
+            'loss_d_fake': [],
+            'accuracy_g': [],
+            'accuracy_d_real': [],
+            'accuracy_d_fake': []
+        }
+
 
     def train(self):
         for epoch in range(self.epochs):
@@ -72,6 +82,16 @@ class Experiment:
             loss_string = f'Loss_G: {generator_error:.4f}\tReal_Loss_D: {real_error:.4f}\tFake_Loss_D: {fake_error:.4f}'
             accuracy_string = f'Accuracy_G: {generator_accuracy:.4f}\tReal_Accuracy_D: {real_accuracy:.4f}\tFake_Accuracy_D: {fake_accuracy:.4f}'
             print(f'{epoch+1}/{self.epochs}: FID: {fid}\t{loss_string}\t{accuracy_string}')
+
+            self.model_metrics['epochs'].append(epoch)
+            self.model_metrics['fid'].append(fid)
+            self.model_metrics['loss_g'].append(generator_error)
+            self.model_metrics['loss_d_real'].append(real_error)
+            self.model_metrics['loss_d_fake'].append(fake_error)
+            self.model_metrics['accuracy_g'].append(generator_accuracy)
+            self.model_metrics['accuracy_d_real'].append(real_accuracy)
+            self.model_metrics['accuracy_d_fake'].append(fake_accuracy)
+
             with th.no_grad():
                 if epoch % self.save_checkpoint_every == 0:
                     print('-> Saving model checkpoint')
@@ -81,7 +101,7 @@ class Experiment:
                     self.save_model_image(epoch)
                 if epoch % self.save_metrics_every == 0:
                     print('-> Saving metrics')
-                    self.save_model_metrics(epoch, real_accuracy, fake_accuracy, generator_accuracy, fid, real_error, fake_error, generator_error)
+                    self.save_model_metrics(epoch)
 
     def epoch(self):
         total_fid = 0
@@ -142,9 +162,9 @@ class Experiment:
             fid = evaluation.calculate_fretchet(real_images, fake_images, self.discriminator)
             self.discriminator.train()
 
-        real_correct = (real_labels == real_predicted.round()).sum()
-        fake_correct = (fake_labels == fake_predicted.round()).sum()
-        generator_correct = (real_labels == generator_fake_predicted.round()).sum()
+        real_correct = (real_labels == real_predicted.round()).sum().item()
+        fake_correct = (fake_labels == fake_predicted.round()).sum().item()
+        generator_correct = (real_labels == generator_fake_predicted.round()).sum().item()
         return fid, real_correct, fake_correct, generator_correct
 
     def save_model_checkpoint(self, epoch: int) -> None:
@@ -161,6 +181,11 @@ class Experiment:
 
     def save_model_metrics(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)    
+        metrics_path = f'{self.full_path}/{epoch}/metrics.csv'
+        with open(metrics_path, 'w+') as f:
+            writer = csv.writer(f)
+            writer.writerow(self.model_metrics.keys())
+            writer.writerows(zip(*self.model_metrics.values()))
 
     def save_model_image(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)
