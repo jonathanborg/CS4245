@@ -8,7 +8,6 @@ import numpy as np
 import torchvision.utils as vutils
 from tqdm import tqdm
 
-from experiments.evaluation import calculate_evaluation_metrics
 import experiments.evaluation as evaluation
 import csv
 
