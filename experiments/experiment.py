@@ -162,7 +162,6 @@ class Experiment:
         with th.no_grad():
             self.discriminator.eval()
             fid = evaluation.calculate_fretchet(real_images, fake_images, self.discriminator)
-            print(fid)
             self.discriminator.train()
 
         real_correct = (real_labels == real_predicted.round()).sum().item()

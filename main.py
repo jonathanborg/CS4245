@@ -8,7 +8,7 @@ config = {
     # environment
     'environment': 'local',
     'local_results_directory': './results',
-    'experiment_name': 'v1',
+    'experiment_name': 'dcgan_normal',
     'data_directory': './data/faces',
     'evaluation': True,
     'num_workers': 8,
@@ -20,11 +20,11 @@ config = {
     'generator_feature_map_depth': 64,
 
     # training
-    'save_checkpoint_every': 3,
-    'save_image_every': 3,
-    'save_metrics_every': 3,
+    'save_checkpoint_every': 10,
+    'save_image_every': 10,
+    'save_metrics_every': 10,
     'batch_size': 64,
-    'epochs': 101,
+    'epochs': 100001,
     'discriminator_lr': 0.002,
     'discriminator_betas': (0.5, 0.999),
     'generator_lr': 0.002,
