@@ -159,10 +159,10 @@ class Experiment:
 
     def metrics(self, real_images, fake_images, real_labels, fake_labels, real_predicted, fake_predicted, generator_fake_predicted):
         # fid calculation
-        with th.no_grad():
-            self.discriminator.eval()
-            fid = evaluation.calculate_fretchet(real_images, fake_images, self.discriminator)
-            self.discriminator.train()
+       #with th#no_grad():
+            # self.discriminator.eval()
+        fid = 0 #evaluation.calculate_fretchet(real_images, fake_images, self.discriminator)
+            # self.discriminator.train()
 
         real_correct = (real_labels == real_predicted.round()).sum().item()
         fake_correct = (fake_labels == fake_predicted.round()).sum().item()
