@@ -1,4 +1,5 @@
 import os
+import shutil
 
 model_to_train = 'dcgan'
 # model_to_train = 'wgan-gp'
@@ -47,6 +48,7 @@ config = {
 }
 
 # create paths
+# shutil.rmtree(config['local_results_directory'])
 if not os.path.isdir(config['local_results_directory']):
     os.mkdir(config['local_results_directory'])
 
