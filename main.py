@@ -1,17 +1,17 @@
 import os
 import shutil
 
-model_to_train = 'dcgan'
-# model_to_train = 'wgan-gp'
+# model_to_train = 'dcgan'
+model_to_train = 'wgan-gp'
 
 config = {
     # environment
     'environment': 'local',
     'local_results_directory': './results',
-    'experiment_name': 'dcgan_normal',
-    'data_directory': './data/faces',
+    'experiment_name': 'wgan_tests',
+    'data_directory': './data/faces_reduced',
     'evaluation': True,
-    'num_workers': 8,
+    'num_workers': 0,
 
     # network
     'noise_size': 100,

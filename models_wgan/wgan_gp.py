@@ -175,8 +175,7 @@ class Training:
             'epochs': [],
             'fid': [],
             'loss_g': [],
-            'loss_d_real': [],
-            'loss_d_fake': [],
+            'loss_d': [],
             'accuracy_g': [],
             'accuracy_d_real': [],
             'accuracy_d_fake': []
@@ -188,9 +187,9 @@ class Training:
             print('EPOCH: ', epoch)
 
             total_fid = 0
-            total_real_error = 0
-            total_fake_error = 0
+            total_critic_error = 0
             total_generator_error = 0
+
             total_real_correct = 0
             total_fake_correct = 0
             total_generator_correct = 0
@@ -234,11 +233,11 @@ class Training:
                     total_real_correct += real_correct
                     total_fake_correct += fake_correct
                     total_generator_correct += generator_correct
-                    total_real_error += loss_critic.item()
+                    total_critic_error += loss_critic.item()
                     total_generator_error += loss_generator.item()
 
                     evaluation_outcomes.append(
-                        [total_fid, total_real_error, total_fake_error, total_generator_error, total_real_correct,
+                        [total_fid, total_critic_error, total_generator_error, total_real_correct,
                          total_fake_correct, total_generator_correct])
 
             # metric calculation
@@ -246,19 +245,17 @@ class Training:
             fake_accuracy = total_real_correct / self.datasize
             generator_accuracy = total_generator_correct / self.datasize
             fid = total_fid / self.datasize
-            real_error = total_real_error / self.datasize
-            fake_error = total_fake_error / self.datasize
-            generator_error = total_generator_error / self.datasize
+            critic_error = total_critic_error / len(self.dataloader)
+            generator_error = total_generator_error / len(self.dataloader)
 
-            loss_string = f'Loss_G: {generator_error:.4f}\tReal_Loss_D: {real_error:.4f}\tFake_Loss_D: {fake_error:.4f}'
+            loss_string = f'Loss_G: {generator_error:.4f}\tCritic_Loss_D: {critic_error:.4f}'
             accuracy_string = f'Accuracy_G: {generator_accuracy:.4f}\tReal_Accuracy_D: {real_accuracy:.4f}\tFake_Accuracy_D: {fake_accuracy:.4f}'
             print(f'{epoch + 1}/{self.epochs}: FID: {fid}\t{loss_string}\t{accuracy_string}')
 
             self.model_metrics['epochs'].append(epoch)
             self.model_metrics['fid'].append(fid)
             self.model_metrics['loss_g'].append(generator_error)
-            self.model_metrics['loss_d_real'].append(real_error)
-            self.model_metrics['loss_d_fake'].append(fake_error)
+            self.model_metrics['loss_d'].append(critic_error)
             self.model_metrics['accuracy_g'].append(generator_accuracy)
             self.model_metrics['accuracy_d_real'].append(real_accuracy)
             self.model_metrics['accuracy_d_fake'].append(fake_accuracy)
