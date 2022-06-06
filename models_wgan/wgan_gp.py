@@ -279,10 +279,10 @@ class Training:
 
     def metrics(self, real_images, fake_images, real_labels, fake_labels, real_predicted, fake_predicted, generator_fake_predicted):
         # fid calculation
-        with th.no_grad():
-            self.critic.eval()
-            fid = evaluation.calculate_fretchet(real_images, fake_images, self.critic)
-            self.critic.train()
+        # with th.no_grad():
+            # self.critic.eval()
+        fid =  0# evaluation.calculate_fretchet(real_images, fake_images, self.critic)
+            # self.critic.train()
 
         real_correct = real_predicted.sum().item()
         fake_correct = fake_predicted.sum().item()
