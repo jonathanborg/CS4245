@@ -37,7 +37,7 @@ class CriticBlock(th.nn.Module):
         else:
             self.main = th.nn.Sequential(
                 th.nn.Conv2d(in_channels, out_channels, 4, 2, 1, bias=False),
-                th.nn.BatchNorm2d(out_channels),
+                th.nn.InstanceNorm2d(out_channels),
                 th.nn.LeakyReLU(0.2, inplace=True),
             )
 
