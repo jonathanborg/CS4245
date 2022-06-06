@@ -175,11 +175,10 @@ class Training:
             'epochs': [],
             'fid': [],
             'loss_g': [],
-            'loss_d_real': [],
-            'loss_d_fake': [],
-            'accuracy_g': [],
-            'accuracy_d_real': [],
-            'accuracy_d_fake': []
+            'loss_d': [],
+            'activations_g': [],
+            'activations_d_real': [],
+            'activations_d_fake': []
         }
 
     def train(self):
@@ -188,12 +187,12 @@ class Training:
             print('EPOCH: ', epoch)
 
             total_fid = 0
-            total_real_error = 0
-            total_fake_error = 0
+            total_critic_error = 0
             total_generator_error = 0
-            total_real_correct = 0
-            total_fake_correct = 0
-            total_generator_correct = 0
+
+            total_real_activations = 0
+            total_fake_activations = 0
+            total_generator_activations = 0
 
             for batch_idx, (real, _) in enumerate(self.dataloader):
                 real = real.to(self.device)
@@ -226,40 +225,42 @@ class Training:
                     batch_size = real.size(0)
                     real_labels = th.full((batch_size,), self.true_label_value, dtype=th.float, device=self.device)
                     fake_labels = th.full((batch_size,), self.fake_label_value, dtype=th.float, device=self.device)
-                    fid, real_correct, fake_correct, generator_correct = self.metrics(real, fake, real_labels,
-                                                                                      fake_labels, critic_real,
-                                                                                      critic_fake, output)
+                    # fid, real_correct, fake_correct, generator_correct = self.metrics(real, fake, real_labels,
+                    #                                                                   fake_labels, critic_real,
+                    #                                                                   critic_fake, output)
 
-                    total_fid += fid
-                    total_real_correct += real_correct
-                    total_fake_correct += fake_correct
-                    total_generator_correct += generator_correct
+                    total_fid += 0
+                    total_real_activations += critic_real.sum().item()
+                    total_fake_activations += critic_fake.sum().item()
+                    total_generator_activations += output.sum().item()
+                    total_critic_error += loss_critic.item()
+                    total_generator_error += loss_generator.item()
 
                     evaluation_outcomes.append(
-                        [total_fid, total_real_error, total_fake_error, total_generator_error, total_real_correct,
-                         total_fake_correct, total_generator_correct])
+                        [total_fid, total_critic_error, total_generator_error, total_real_activations,
+                         total_fake_activations, total_generator_activations])
 
             # metric calculation
-            real_accuracy = total_fake_correct / self.datasize
-            fake_accuracy = total_real_correct / self.datasize
-            generator_accuracy = total_generator_correct / self.datasize
             fid = total_fid / self.datasize
-            real_error = total_real_error / self.datasize
-            fake_error = total_fake_error / self.datasize
-            generator_error = total_generator_error / self.datasize
+            critic_error = total_critic_error / len(self.dataloader)
+            generator_error = total_generator_error / len(self.dataloader)
 
-            loss_string = f'Loss_G: {generator_error:.4f}\tReal_Loss_D: {real_error:.4f}\tFake_Loss_D: {fake_error:.4f}'
-            accuracy_string = f'Accuracy_G: {generator_accuracy:.4f}\tReal_Accuracy_D: {real_accuracy:.4f}\tFake_Accuracy_D: {fake_accuracy:.4f}'
+            fake_activations = total_fake_activations / self.datasize
+            real_activations = total_real_activations / self.datasize
+            activations_g = total_generator_activations / self.datasize
+
+            loss_string = f'Loss_G: {generator_error:.4f}\tLoss_D: {critic_error:.4f}'
+            accuracy_string = f'Activations_G: {activations_g:.4f}\tReal_Activations_D: {real_activations:.4f}\tFake_Activations_D: {fake_activations:.4f}'
             print(f'{epoch + 1}/{self.epochs}: FID: {fid}\t{loss_string}\t{accuracy_string}')
+
 
             self.model_metrics['epochs'].append(epoch)
             self.model_metrics['fid'].append(fid)
             self.model_metrics['loss_g'].append(generator_error)
-            self.model_metrics['loss_d_real'].append(real_error)
-            self.model_metrics['loss_d_fake'].append(fake_error)
-            self.model_metrics['accuracy_g'].append(generator_accuracy)
-            self.model_metrics['accuracy_d_real'].append(real_accuracy)
-            self.model_metrics['accuracy_d_fake'].append(fake_accuracy)
+            self.model_metrics['loss_d'].append(critic_error)
+            self.model_metrics['activations_g'].append(activations_g)
+            self.model_metrics['activations_d_real'].append(real_activations)
+            self.model_metrics['activations_d_fake'].append(fake_activations)
 
             # SAVE MODEL AND IMAGES
             if epoch % self.save_checkpoint_every == 0:
@@ -278,12 +279,12 @@ class Training:
 
     def metrics(self, real_images, fake_images, real_labels, fake_labels, real_predicted, fake_predicted, generator_fake_predicted):
         # fid calculation
-        with th.no_grad():
-            self.critic.eval()
-            fid = evaluation.calculate_fretchet(real_images, fake_images, self.critic)
-            self.critic.train()
+        # with th.no_grad():
+            # self.critic.eval()
+        fid =  0# evaluation.calculate_fretchet(real_images, fake_images, self.critic)
+            # self.critic.train()
 
-        real_correct = (real_labels == real_predicted.round()).sum().item()
-        fake_correct = (fake_labels == fake_predicted.round()).sum().item()
-        generator_correct = (real_labels == generator_fake_predicted.round()).sum().item()
+        real_correct = real_predicted.sum().item()
+        fake_correct = fake_predicted.sum().item()
+        generator_correct = generator_fake_predicted.sum().item()
         return fid, real_correct, fake_correct, generator_correct

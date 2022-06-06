@@ -131,6 +131,7 @@ class Experiment:
         batch_size = real_images.size(0)
         real_labels = th.full((batch_size, ), self.true_label_value, dtype=th.float, device=self.device)
         real_predicted = self.discriminator(real_images).view(-1)
+        # print(real_predicted)
         discriminator_real_error = self.criterion(real_predicted, real_labels)
         discriminator_real_error.backward()
 
@@ -139,6 +140,7 @@ class Experiment:
         fake_images = self.generator(noise)
         fake_labels = th.full((batch_size, ), self.fake_label_value, dtype=th.float, device=self.device)
         fake_predicted = self.discriminator(fake_images.detach()).view(-1)
+        # print(fake_predicted)
         discriminator_fake_error = self.criterion(fake_predicted, fake_labels)
         discriminator_fake_error.backward()
         # discrminiator optimizer step
@@ -147,6 +149,7 @@ class Experiment:
         # generator
         self.generator_optimizer.zero_grad()
         generator_fake_predicted = self.discriminator(fake_images).view(-1)
+        # print(generator_fake_predicted)
         generator_error = self.criterion(generator_fake_predicted, real_labels)
         generator_error.backward()
         self.generator_optimizer.step()
@@ -156,10 +159,10 @@ class Experiment:
 
     def metrics(self, real_images, fake_images, real_labels, fake_labels, real_predicted, fake_predicted, generator_fake_predicted):
         # fid calculation
-        with th.no_grad():
-            self.discriminator.eval()
-            fid = evaluation.calculate_fretchet(real_images, fake_images, self.discriminator)
-            self.discriminator.train()
+       #with th#no_grad():
+            # self.discriminator.eval()
+        fid = 0 #evaluation.calculate_fretchet(real_images, fake_images, self.discriminator)
+            # self.discriminator.train()
 
         real_correct = (real_labels == real_predicted.round()).sum().item()
         fake_correct = (fake_labels == fake_predicted.round()).sum().item()
