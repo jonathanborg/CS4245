@@ -48,10 +48,7 @@ config = {
 
 }
 # Load prior training and continue training on latest checkpoint
-if os.path.isdir(config['prior_training']) and config['experiment_name'] in os.listdir(config['prior_training']):
-    load_model = True
-else:
-    load_model = False
+load_model = os.path.isdir(config['prior_training']) and config['experiment_name'] in os.listdir(config['prior_training'])
 
 # create paths
 # shutil.rmtree(config['local_results_directory'])
