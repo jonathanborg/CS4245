@@ -47,6 +47,11 @@ config = {
     'wgan_gp_betas': (0.0, 0.9)
 
 }
+# Load prior training and continue training on latest checkpoint
+if os.path.isdir(config['prior_training']) and config['experiment_name'] in os.listdir(config['prior_training']):
+    load_model = True
+else:
+    load_model = False
 
 # create paths
 # shutil.rmtree(config['local_results_directory'])
@@ -85,13 +90,6 @@ if config['model_name'] == 'dcgan':
     criterion = th.nn.BCELoss(reduction='sum')
     # create experiment
     experiment = Experiment(config, generator, discriminator, generator_optimizer, discriminator_optimizer, criterion, dataloader)
-    experiment.train()
-
-
-# elif config['model_name'] == 'dcgan-data-aug':
-#
-# elif config['model_name'] == 'wgan':
-#
 elif config['model_name'] == 'wgan-gp':
     # create networks
     generator = wgan_gp.Generator(config["noise_size"], config["generator_feature_map_depth"]).to(device)
@@ -109,6 +107,9 @@ elif config['model_name'] == 'wgan-gp':
     criterion = None
 
     experiment = wgan_gp.Training(generator, critic, generator_optimizer, critic_optimizer, device, dataloader, config)
-    experiment.train()
 
+current_epoch = 0
+if load_model:
+    current_epoch = experiment.load_model_checkpoint(os.path.join(config['prior_training'], config['experiment_name']))
+experiment.train(current_epoch)
 # elif config['model_name'] == 'wgan-gp-data-aug':
