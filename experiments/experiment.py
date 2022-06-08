@@ -65,9 +65,8 @@ class Experiment:
             'accuracy_d_fake': []
         }
 
-
-    def train(self):
-        for epoch in range(self.epochs):
+    def train(self, current_epoch):
+        for epoch in range(current_epoch, self.epochs):
             total_fid, total_real_error, total_fake_error, total_generator_error, total_real_correct, total_fake_correct, total_generator_correct = self.epoch()
             # metric calculation
             real_accuracy = total_fake_correct / self.datasize
@@ -179,7 +178,19 @@ class Experiment:
             'generator_optimizer_state_dict': self.generator_optimizer.state_dict(),
             'discriminator_optimizer_state_dict': self.discriminator_optimizer.state_dict(),
         }, f'{checkpoint_path}/checkpoint.th')
-        
+
+    def load_model_checkpoint(self, path: str) -> int:
+        ordered_saves = os.listdir(path)
+        ordered_saves.sort(reverse=True)
+        latest_save = ordered_saves[0]
+        checkpoint_path = f'{path}/{latest_save}/checkpoint.th'
+        checkpoint = th.load(checkpoint_path)
+
+        self.generator.load_state_dict(checkpoint['generator_model_state_dict'])
+        self.discriminator.load_state_dict(checkpoint['discriminator_model_state_dict'])
+        self.generator_optimizer.load_state_dict(checkpoint['generator_optimizer_state_dict'])
+        self.discriminator_optimizer.load_state_dict(checkpoint['discriminator_optimizer_state_dict'])
+        return checkpoint['epoch'] + 1
 
     def save_model_metrics(self, epoch: int) -> None:
         self.make_epoch_directories(epoch)    

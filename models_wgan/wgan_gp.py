@@ -10,7 +10,7 @@ import numpy as np
 from tqdm import tqdm
 
 from experiments import evaluation
-from utils.utils import SaveModel
+import csv
 
 """
 Model
@@ -168,8 +168,7 @@ class Training:
         self.lambda_gp = config['lambda_gp']
         self.wgan_gp_lr = config['wgan_gp_lr']
         self.wgan_gp_betas = config['wgan_gp_betas']
-        self.saving = SaveModel(generator, critic, generator_optimizer, critic_optimizer, self.full_path,
-                                config['noise_size'], device, self.fixed_noise)
+
         self.datasize = len(self.dataloader.dataset)
         self.model_metrics = {
             'epochs': [],
@@ -181,9 +180,9 @@ class Training:
             'activations_d_fake': []
         }
 
-    def train(self):
+    def train(self, current_epoch):
         evaluation_outcomes = []
-        for epoch in range(self.epochs + 1):
+        for epoch in range(current_epoch, self.epochs + 1):
             print('EPOCH: ', epoch)
 
             total_fid = 0
@@ -193,8 +192,8 @@ class Training:
             total_real_activations = 0
             total_fake_activations = 0
             total_generator_activations = 0
-
-            for batch_idx, (real, _) in enumerate(self.dataloader):
+            for (real, _) in tqdm(self.dataloader, leave=False):
+                # for batch_idx, (real, _) in enumerate(self.dataloader):
                 real = real.to(self.device)
                 batch_size = real.size(0)
 
@@ -253,7 +252,6 @@ class Training:
             accuracy_string = f'Activations_G: {activations_g:.4f}\tReal_Activations_D: {real_activations:.4f}\tFake_Activations_D: {fake_activations:.4f}'
             print(f'{epoch + 1}/{self.epochs}: FID: {fid}\t{loss_string}\t{accuracy_string}')
 
-
             self.model_metrics['epochs'].append(epoch)
             self.model_metrics['fid'].append(fid)
             self.model_metrics['loss_g'].append(generator_error)
@@ -265,26 +263,84 @@ class Training:
             # SAVE MODEL AND IMAGES
             if epoch % self.save_checkpoint_every == 0:
                 print('-> Saving model checkpoint')
-                self.saving.save_model_checkpoint(epoch)
+                self.save_model_checkpoint(epoch)
 
             if epoch % self.save_image_every == 0:
                 print('-> Saving model images')
-                self.saving.save_model_image(epoch)
+                self.save_model_image(epoch)
 
             if epoch % self.save_metrics_every == 0:
                 print('-> Saving metrics')
-                self.saving.save_model_metrics(epoch, self.model_metrics)
+                self.save_model_metrics(epoch, self.model_metrics)
 
         return evaluation_outcomes
 
-    def metrics(self, real_images, fake_images, real_labels, fake_labels, real_predicted, fake_predicted, generator_fake_predicted):
+    def metrics(self, real_images, fake_images, real_labels, fake_labels, real_predicted, fake_predicted,
+                generator_fake_predicted):
         # fid calculation
         # with th.no_grad():
-            # self.critic.eval()
-        fid =  0# evaluation.calculate_fretchet(real_images, fake_images, self.critic)
-            # self.critic.train()
+        # self.critic.eval()
+        fid = 0  # evaluation.calculate_fretchet(real_images, fake_images, self.critic)
+        # self.critic.train()
 
         real_correct = real_predicted.sum().item()
         fake_correct = fake_predicted.sum().item()
         generator_correct = generator_fake_predicted.sum().item()
         return fid, real_correct, fake_correct, generator_correct
+
+    def save_model_checkpoint(self, epoch: int) -> None:
+        self.make_epoch_directories(epoch)
+        checkpoint_path = f'{self.full_path}/{epoch}'
+        th.save({
+            'epoch': epoch,
+            'generator_model_state_dict': self.generator.state_dict(),
+            'discriminator_model_state_dict': self.critic.state_dict(),
+            'generator_optimizer_state_dict': self.generator_optimizer.state_dict(),
+            'discriminator_optimizer_state_dict': self.critic_optimizer.state_dict(),
+        }, f'{checkpoint_path}/checkpoint.th')
+
+    def save_model_image(self, epoch: int) -> None:
+        self.make_epoch_directories(epoch)
+        image_path = f'{self.full_path}/{epoch}/images'
+        if not os.path.isdir(image_path):
+            os.mkdir(image_path)
+        random_noise = th.randn(64, self.noise_size, 1, 1, device=self.device)
+        fixed_fakes = self.generator(self.fixed_noise).detach().cpu()
+        random_fakes = self.generator(random_noise).detach().cpu()
+        self.save_image_grid(fixed_fakes, f'{image_path}/fixed.png', 'Fixed Noise')
+        self.save_image_grid(random_fakes, f'{image_path}/random.png', 'Random Noise')
+
+    def save_model_metrics(self, epoch: int, model_metrics) -> None:
+        self.make_epoch_directories(epoch)
+        metrics_path = f'{self.full_path}/{epoch}/metrics.csv'
+        with open(metrics_path, 'w+') as f:
+            writer = csv.writer(f)
+            writer.writerow(model_metrics.keys())
+            writer.writerows(zip(*model_metrics.values()))
+
+    def save_image_grid(self, images, path: str, title: str) -> None:
+        plt.figure(figsize=(8, 8))
+        plt.axis('off')
+        plt.title(title)
+        plt.imshow(
+            np.transpose(vutils.make_grid(images.to(self.device)[:64], padding=2, normalize=True).cpu(), (1, 2, 0)))
+        plt.savefig(path)
+        plt.close()
+
+    def make_epoch_directories(self, epoch: int) -> None:
+        epoch_path = f'{self.full_path}/{epoch}'
+        if not os.path.isdir(epoch_path):
+            os.mkdir(epoch_path)
+
+    def load_model_checkpoint(self, path: str) -> int:
+        ordered_saves = os.listdir(path)
+        ordered_saves.sort(reverse=True)
+        latest_save = ordered_saves[0]
+        checkpoint_path = f'{path}/{latest_save}/checkpoint.th'
+        checkpoint = th.load(checkpoint_path)
+
+        self.generator.load_state_dict(checkpoint['generator_model_state_dict'])
+        self.critic.load_state_dict(checkpoint['discriminator_model_state_dict'])
+        self.generator_optimizer.load_state_dict(checkpoint['generator_optimizer_state_dict'])
+        self.critic_optimizer.load_state_dict(checkpoint['discriminator_optimizer_state_dict'])
+        return checkpoint['epoch']

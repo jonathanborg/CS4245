@@ -10,6 +10,7 @@ config = {
     'local_results_directory': './results',
     'experiment_name': 'wgan_tests',
     'data_directory': './data/faces_reduced',
+    'prior_training': './kernel_output/generator_results',
     'evaluation': True,
     'num_workers': 0,
 
