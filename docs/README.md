@@ -68,7 +68,7 @@ Within this subsection, we discuss the type of data being used, alongside the pr
 
 #### Dataset
 
-Seeing as the inspiration for this type of research was obtained from a paper conducting the same kind of research\cite{jin2017towards}, we opted to use their original data source. Unfortunately, when trying to replicate their data retrieval process, our team could not generate the dataset successfully. Therefore we found a similar \href{https://drive.google.com/file/d/1HG7YnakUkjaxtNMclbl2t5sJwGLcHYsI/view}{dataset}, containing approximately 30 thousand anime faces.
+Seeing as the inspiration for this type of research was obtained from a paper conducting the same kind of research\cite{jin2017towards}, we opted to use their original data source. Unfortunately, when trying to replicate their data retrieval process, our team could not generate the dataset successfully. Therefore we found a similar [dataset](https://drive.google.com/file/d/1HG7YnakUkjaxtNMclbl2t5sJwGLcHYsI/view), containing approximately 30 thousand anime faces.
 
 We also looked into different datasets, expressly, different animation styles, such as cartoon faces, apart from this primary dataset. However, as discussed in the Evaluation section, this secondary dataset was used as part of our evaluation to understand how our model would perform when using different animation styles.
  
@@ -107,12 +107,12 @@ For **Weight initialization** of our models we follow the guidelines as describe
 
 In terms of **Loss Function**, the [**Binary Cross Entropy** (BCELoss)](https://pytorch.org/docs/stable/generated/torch.nn.BCELoss.html\#bceloss) is used. And we opted to use the **Adam** optimizer, as specified in the DCGAN paper.
 
-![Architecture of DCGAN](Images/dcgan.PNG)
+![Architecture of DCGAN](Images/dcgan.png)
 
 #### Wasserstein GAN (with Gradient Penalty)
 A common problem in regular GANs (and also DCGANs) are **vanishing gradients** and **[mode collapse](https://developers.google.com/machine-learning/gan/problems)**. Vanishing gradients may occur when the discriminator is better equipped and more accurate in its predictions, resulting in the failure of generator training. Mode collapse happens when the generator gets stuck, producing some especially plausible results. This means that it learns only to produce that output, whereas, in an idealistic scenario, this network learns to produce multiple representations that are all plausible to the discriminator.
 
-![Architecture of WGAN](Images/wgan.PNG)
+![Architecture of WGAN](Images/wgan.png)
 
 ##### Wasserstein GAN
 
@@ -120,7 +120,8 @@ The Wasserstein GAN is capable of solving both previously mentioned issues. This
 
 ![EM Distance](Images/em_distance.PNG)
 
-The Wasserstein distance has a continuous and differentiable gradient property explicitly even after the discriminator (also known as a critic when using WGANs) is well trained. This continuous and differentiable gradient property alleviates the problem of mode collapse \ref{TODO: REF SOME BLOGPOSTS?}.
+The Wasserstein distance has a continuous and differentiable gradient property explicitly even after the discriminator (also known as a critic when using WGANs) is well trained. 
+This continuous and differentiable gradient property alleviates the problem of mode collapse \ref{TODO: REF SOME BLOGPOSTS?}.
 
 
 Because the original equation for the Wasserstein distance is intractable to compute, the authors used the Kantorovich-Rubinstein duality to simplify the calculation to the following:
@@ -132,7 +133,7 @@ Where ${f(x)}$ is the **critic (discriminator)** and the ${x}$'s are sampled fro
 [//]: # "Should this be a footnote or kept as an easy-to-read paragraph?"
 The discriminator is named critic because the critic $f$ does not classify (or discriminate) but instead evaluates how 'real' some input is (criticizing the output). With respect to the loss expression, we are now checking how close the **distance** is between samples from $P_r$ and $P_\theta$, hence the so-called critic.
 
-Finally, we have a **constraint (Lipschitz constraint)** $||f||_L \leq 1$, representing that the norm of the gradient of $f$ must be less than or equal to 1.
+Finally, we have a **constraint (Lipschitz constraint)** $|f|_L \leq 1$, representing that the norm of the gradient of $f$ must be less than or equal to 1.
 
 This loss can be interpreted as the discriminator trying to maximize this expression, meaning that it wants to separate the two distributions $P_r$ and $P_\theta$ as much as possible, while the generator aims to minimize it. 
 
@@ -147,7 +148,7 @@ In the original WGAN paper, the Lipschitz constraint is enforced by separately c
 
 The paper proved that points interpolated between the real and generated data should have a gradient norm of 1 for $f$. This is then used to enforce the Lipschitz constraint by ensuring that the gradients' norm stays less or equal to 1. 
 
-A slightly more elaborate explanation; (interpolated images) $\hat{x}$'s are sampled from $P_{\hat{x}}$ which are points between $P_g$ (generated images) and $P_r$ (real images) as they lie in between the real and generated data. To minimize this loss, the penalty term must be minimized as well, and this only happens when the penalty term approaches 0 or when $||\nabla_{\hat{x}} D(\hat{x})||_2$, the norm of the gradient of the interpolated image, is close to 1 which will enforce the Lipschitz constraint. To enforce the Lipschitz constraint, we must thus make sure that the gradient norm of the interpolation is close to 1. If this is not the case, we penalize the model so that it learns to satisfy this constraint.
+A slightly more elaborate explanation; (interpolated images) $\hat{x}$'s are sampled from $P_{\hat{x}}$ which are points between $P_g$ (generated images) and $P_r$ (real images) as they lie in between the real and generated data. To minimize this loss, the penalty term must be minimized as well, and this only happens when the penalty term approaches 0 or when $|\nabla_{\hat{x}} D(\hat{x})|_2$, the norm of the gradient of the interpolated image, is close to 1 which will enforce the Lipschitz constraint. To enforce the Lipschitz constraint, we must thus make sure that the gradient norm of the interpolation is close to 1. If this is not the case, we penalize the model so that it learns to satisfy this constraint.
 
 
 ##### Implementation changes
@@ -197,5 +198,5 @@ The authors first propose that the critic be trained five times as much as the g
 ---
 
 ## References
-
+TO BE UPDATED
 [1] Jin, Y., Zhang, J., Li, M., Tian, Y., Zhu, H., & Fang, Z. (2017). Towards the automatic anime characters creation with generative adversarial networks. arXiv preprint arXiv:1708.05509.
