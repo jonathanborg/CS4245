@@ -62,28 +62,28 @@ The discriminator and the generator play a minimax game where the discriminator 
 
 Within the following section, we describe the type of data used, methods utilized, and the different components of each architecture.
 
-###Data
+### Data
 
 Within this subsection, we discuss the type of data being used, alongside the pre-processing required such that this data can be used within the model.
 
-####Dataset
+#### Dataset
 
 Seeing as the inspiration for this type of research was obtained from a paper conducting the same kind of research\cite{jin2017towards}, we opted to use their original data source. Unfortunately, when trying to replicate their data retrieval process, our team could not generate the dataset successfully. Therefore we found a similar \href{https://drive.google.com/file/d/1HG7YnakUkjaxtNMclbl2t5sJwGLcHYsI/view}{dataset}, containing approximately 30 thousand anime faces.
 
 We also looked into different datasets, expressly, different animation styles, such as cartoon faces, apart from this primary dataset. However, as discussed in the Evaluation section, this secondary dataset was used as part of our evaluation to understand how our model would perform when using different animation styles.
  
 
-####Data pre-processing
+#### Data pre-processing
 
 Before training and evaluating our models, all training and testing validation data sets are modified to a resolution of 96x96. This alteration allows for a uniform model architecture for all training. Nevertheless, even though we are applying this pre-processing, our algorithm is strong enough to cater to different resolution values by slightly altering the model architecture to cater to these new resolutions.
 
-####Data Augmentation
+#### Data Augmentation
 
 To reduce the data bias and overfitting and obtain more versatility in our data, for each epoch, we deploy a horizontal flip on an image; each image has a probability of 0.5 of being flipped or keeping the original.
 
 [//]: # " Maybe explicitly mention what are the parameters?"
 
-###Models
+### Models
 Within this subsection, we discuss the models used and their respective loss functions.
 
 
@@ -93,7 +93,7 @@ When comparing regular GANs and DCGANs, one can note that DCGANs explicitly use 
 
 However, during training, we noticed that our DCGAN encountered the issue of [mode collapse](https://developers.google.com/machine-learning/gan/problems\#mode-collapse) after a short amount of epochs. This led us to research different GAN architectures that can combat the issue of mode collapse. As a result, we found the architecture called the Wasserstein GAN (WGAN)\cite{arjovsky2017wasserstein}, and an extension called Wasserstein GAN with Gradient Penalty (WGAN-GP)\cite{gulrajani2017improved}. This architecture showed to solve the problem of mode collapse, with the pitfall of requiring more training before acceptable results could be identified.
 
-####DCGAN
+#### DCGAN
 A DCGAN is an extension of the GAN architecture that uses only convolutional (and convolutional-transpose) layers in each component. For our research, we followed the original DCGAN paper guidelines\cite{dcganpaper_radford2015unsupervised} with the slight adjustment of altering the number of network layers. 
 
 
@@ -109,12 +109,12 @@ In terms of **Loss Function**, the [**Binary Cross Entropy** (BCELoss)](https://
 
 ![Architecture of DCGAN](Images/dcgan.PNG)
 
-####Wasserstein GAN (with Gradient Penalty)
+#### Wasserstein GAN (with Gradient Penalty)
 A common problem in regular GANs (and also DCGANs) are **vanishing gradients** and **[mode collapse](https://developers.google.com/machine-learning/gan/problems)**. Vanishing gradients may occur when the discriminator is better equipped and more accurate in its predictions, resulting in the failure of generator training. Mode collapse happens when the generator gets stuck, producing some especially plausible results. This means that it learns only to produce that output, whereas, in an idealistic scenario, this network learns to produce multiple representations that are all plausible to the discriminator.
 
 ![Architecture of WGAN](Images/wgan.PNG)
 
-#####Wasserstein GAN
+##### Wasserstein GAN
 
 The Wasserstein GAN is capable of solving both previously mentioned issues. This GAN allows for the training of the discriminator optimally without worrying about vanishing gradients. To achieve this, we use the Wasserstein Loss, which aims to minimize the Wasserstein distance (Earth-Mover distance) between two distributions: the training samples and the generated examples. Formally defined as:
 
@@ -137,7 +137,7 @@ Finally, we have a **constraint (Lipschitz constraint)** $||f||_L \leq 1$, repre
 This loss can be interpreted as the discriminator trying to maximize this expression, meaning that it wants to separate the two distributions $P_r$ and $P_\theta$ as much as possible, while the generator aims to minimize it. 
 
 
-#####Wasserstein GAN with Gradient Penalty
+##### Wasserstein GAN with Gradient Penalty
 
 In the original WGAN paper, the Lipschitz constraint is enforced by separately clipping each of the weights such that the gradient norm stays less or equal to 1. However, the authors mention that this is a bad idea~\cite{paper?}, allowing them to research this in more detail in future research. That is Wasserstein GAN with Gradient Penalty, abbreviated to WGAN-GP~\cite{gulrajani2017improved}.
 
@@ -150,7 +150,7 @@ The paper proved that points interpolated between the real and generated data sh
 A slightly more elaborate explanation; (interpolated images) $\hat{x}$'s are sampled from $P_{\hat{x}}$ which are points between $P_g$ (generated images) and $P_r$ (real images) as they lie in between the real and generated data. To minimize this loss, the penalty term must be minimized as well, and this only happens when the penalty term approaches 0 or when $||\nabla_{\hat{x}} D(\hat{x})||_2$, the norm of the gradient of the interpolated image, is close to 1 which will enforce the Lipschitz constraint. To enforce the Lipschitz constraint, we must thus make sure that the gradient norm of the interpolation is close to 1. If this is not the case, we penalize the model so that it learns to satisfy this constraint.
 
 
-#####Implementation changes
+##### Implementation changes
 
 To implement and transform the original DCGAN into a WGAN-GP, we can follow the pseudocode as proposed by the authors. 
 
