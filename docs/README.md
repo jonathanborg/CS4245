@@ -59,21 +59,26 @@ The discriminator and the generator play a minimax game where the discriminator 
 ---
 
 ## Method & Approach
+
 Within the following section, we describe the type of data used, methods utilized, and the different components of each architecture.
 
 ###Data
+
 Within this subsection, we discuss the type of data being used, alongside the pre-processing required such that this data can be used within the model.
 
 ####Dataset
+
 Seeing as the inspiration for this type of research was obtained from a paper conducting the same kind of research\cite{jin2017towards}, we opted to use their original data source. Unfortunately, when trying to replicate their data retrieval process, our team could not generate the dataset successfully. Therefore we found a similar \href{https://drive.google.com/file/d/1HG7YnakUkjaxtNMclbl2t5sJwGLcHYsI/view}{dataset}, containing approximately 30 thousand anime faces.
 
 We also looked into different datasets, expressly, different animation styles, such as cartoon faces, apart from this primary dataset. However, as discussed in the Evaluation section, this secondary dataset was used as part of our evaluation to understand how our model would perform when using different animation styles.
  
 
 ####Data pre-processing
+
 Before training and evaluating our models, all training and testing validation data sets are modified to a resolution of 96x96. This alteration allows for a uniform model architecture for all training. Nevertheless, even though we are applying this pre-processing, our algorithm is strong enough to cater to different resolution values by slightly altering the model architecture to cater to these new resolutions.
 
 ####Data Augmentation
+
 To reduce the data bias and overfitting and obtain more versatility in our data, for each epoch, we deploy a horizontal flip on an image; each image has a probability of 0.5 of being flipped or keeping the original.
 
 [//]: # " Maybe explicitly mention what are the parameters?"
