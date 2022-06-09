@@ -8,7 +8,7 @@ config = {
     # environment
     'environment': 'local',
     'local_results_directory': './results',
-    'experiment_name': 'wgan_tests',
+    'experiment_name': 'save_func_wgan',
     'data_directory': './data/faces_reduced',
     'prior_training': './kernel_output/generator_results',
     'evaluation': True,
