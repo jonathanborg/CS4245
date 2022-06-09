@@ -9,13 +9,13 @@
 <script type="text/javascript" async
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
 </script>
-# Animated Face Creation using Generative Adversarial Networks
+# Animated Face Creation using Generative Adversarial Networks (❁ᵕ‿° )
 
-## A Computer Vision by Deep Learning Study
+## A Computer Vision by Deep Learning Study 
 
-<u>Group 24</u> -  **Frans de Boer**, **Jonathan Borg**, **Haoran Xia**
+<u>Group 24</u> -  **Frans de Boer**, **Haoran Xia**, **Jonathan Borg**
 
-Original Paper: [https://arxiv.org/abs/1708.05509](https://arxiv.org/abs/1708.05509)
+[//]: # "Original Paper: [https://arxiv.org/abs/1708.05509](https://arxiv.org/abs/1708.05509)"
 
 
 [//]: # "Differences:"
