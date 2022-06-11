@@ -20,3 +20,4 @@ scipy
 tqdm
 pytorch-ignite
 zipfile36
+Pillow
