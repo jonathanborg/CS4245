@@ -68,7 +68,8 @@ from experiments import Experiment
 device = th.device('cuda' if th.cuda.is_available() else 'cpu')
 
 # create dataset
-transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor(),])
+transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor(), 
+torchvision.transforms.RandomHorizontalFlip()])
 dataset = torchvision.datasets.ImageFolder(config['data_directory'], transform=transform)
 dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True, num_workers=config['num_workers'])
 
