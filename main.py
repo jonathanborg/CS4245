@@ -3,6 +3,9 @@ import shutil
 
 # import utils.utils
 # utils.utils.resize_images('C:\\Development\\CS4245\\data\\cartoonset100k\\', 'C:\\Development\\CS4245\\data\\cartoon_faces\\all_faces\\')
+# import utils.utils
+# utils.utils.add_label_to_image('C:\\Development\\CS4245\\data\\pre-trained models\\wgan\\', 'C:\\Development\\CS4245\\data\\gif_gen\\', "Epoch")
+
 
 # model_to_train = 'dcgan'
 model_to_train = 'wgan-gp'

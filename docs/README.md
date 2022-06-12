@@ -25,8 +25,7 @@
 
  DCGAN | WGAN
 :-------------------------:|:-------------------------:
-![DCGAN Gif](Images/noise_animation.gif) | ![WGAN Gif](Images/noise_animation.gif)
-![DCGAN Gif](Images/An_example_animation_made_with_Pivot.gif) | ![WGAN Gif](Images/An_example_animation_made_with_Pivot.gif)
+![DCGAN Gif](Images/An_example_animation_made_with_Pivot.gif) | ![WGAN Gif](Images/wgan.gif)
 
 ---
 ## Introduction
@@ -205,5 +204,9 @@ The authors first propose that the critic be trained five times as much as the g
 [//]: # "---"
 
 ## References
-TO BE UPDATED
-[1] Jin, Y., Zhang, J., Li, M., Tian, Y., Zhu, H., & Fang, Z. (2017). Towards the automatic anime characters creation with generative adversarial networks. arXiv preprint arXiv:1708.05509.
+[1] Y. Jin, J. Zhang, M. Li, Y. Tian, H. Zhu, and Z. Fang, “Towards the automatic anime characters creation with generative adversarial networks,” arXiv preprint arXiv:1708.05509, 2017.
+[2] Y. Zheng, Y. Zhao, M. Ren, H. Yan, X. Lu, J. Liu, and J. Li, “Cartoon face recognition: A benchmark dataset,” in Proceedings of the 28th ACM international conference on multimedia, 2020, pp. 2264–2272.
+[3] I. Goodfellow, J. Pouget-Abadie, M. Mirza, B. Xu, D. Warde-Farley, S. Ozair, A. Courville, and Y. Bengio, “Generative adversarial nets,” Advances in neural information processing systems, vol. 27, 2014.
+[4] A. Radford, L. Metz, and S. Chintala, “Unsupervised representation learning with deep convolutional generative adversarial networks,” arXiv preprint arXiv:1511.06434, 2015.
+[5] M. Arjovsky, S. Chintala, and L. Bottou, “Wasserstein generative adversarial networks,” in International conference on machine learning. PMLR, 2017, pp. 214–223.
+[6] I. Gulrajani, F. Ahmed, M. Arjovsky, V. Dumoulin, and A. C. Courville, “Improved training of wasserstein gans,” Advances in neural information processing systems, vol. 30, 2017. 8
