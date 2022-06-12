@@ -25,7 +25,7 @@
 
  Data | DCGAN | WGAN
 :-------------------------:|:-------------------------:|:-------------------------:
-No Augmentation | ![DCGAN Gif](Images/An_example_animation_made_with_Pivot.gif) | ![WGAN Gif](Images/wgan.gif)
+No Augmentation | ![DCGAN Gif](Images/dcgan.gif) | ![WGAN Gif](Images/wgan.gif)
 Horizontal Flip | ![DCGAN Gif](Images/dcgan_data.gif) | ![WGAN Gif](Images/An_example_animation_made_with_Pivot.gif)
 
 ---
