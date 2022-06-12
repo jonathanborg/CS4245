@@ -4,6 +4,9 @@ import torchvision.utils as vutils
 import numpy as np
 import os
 from PIL import Image
+from PIL import ImageDraw, ImageFont
+from matplotlib import font_manager
+
 import glob
 
 
@@ -46,3 +49,20 @@ def resize_images(src, dest):
         im = Image.open(filename)
         im = im.resize((96, 96), Image.ANTIALIAS)
         im.save(f"{dest}\\{os.path.basename(os.path.dirname(filename))}_{os.path.basename(filename)}")
+
+
+def add_label_to_image(src, dest, txt):
+    print("Adding label")
+    if not os.path.isdir(dest):
+        os.mkdir(dest)
+
+    font = font_manager.FontProperties(family='serif')
+    file = font_manager.findfont(font)
+    font = ImageFont.truetype(file)
+
+    for filename in glob.iglob(src + '**/*.png', recursive=True):
+        im = Image.open(filename)
+        img = ImageDraw.Draw(im)
+        img.text((460, 506), f"{txt}: {os.path.splitext(os.path.basename(filename))[0]}", font=font, fill=(0, 0, 0))
+        im.save(f"{dest}\\{os.path.basename(filename)}")
+
