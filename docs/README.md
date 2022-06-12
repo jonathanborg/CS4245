@@ -165,37 +165,38 @@ The authors first propose that the critic be trained five times as much as the g
 
 
 ---
+## Additional Experiments
+![WGAN GP Pseudo Code](Images/cartoon_fixed.PNG)
 
-## Experiments & Results
-
-
-
-### Architecture Change
-
-
-### Data Set Selection
-
-
-### Epoch Selection
-
-#### Testing curve results
-
----
-
-## Discussion
+[//]: # "## Experiments & Results"
 
 
 
-
----
-
-## Future Work
+[//]: # "### Architecture Change"
 
 
-## Conclusion
+[//]: # "### Data Set Selection"
 
 
----
+[//]: # "### Epoch Selection"
+
+[//]: # "#### Testing curve results"
+
+
+[//]: # "## Discussion"
+
+
+
+
+[//]: # "---"
+
+[//]: # "## Future Work"
+
+
+[//]: # "## Conclusion"
+
+
+[//]: # "---"
 
 ## References
 TO BE UPDATED
