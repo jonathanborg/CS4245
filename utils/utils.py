@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import torchvision.utils as vutils
 import numpy as np
 import os
+from PIL import Image
+import glob
 
 
 def weights_init(model):
@@ -34,3 +36,13 @@ def save_model_snapshot(netD, netG, epoch, fixed_noise, device, nz):
     th.save(netD.state_dict(), f'{path}/netD.pth')
     th.save(netG.state_dict(), f'{path}/netG.pth')
 
+
+def resize_images(src, dest):
+    print("Shrink images in the folder")
+    if not os.path.isdir(dest):
+        os.mkdir(dest)
+
+    for filename in glob.iglob(src + '**/*.png', recursive=True):
+        im = Image.open(filename)
+        im = im.resize((96, 96), Image.ANTIALIAS)
+        im.save(f"{dest}\\{os.path.basename(os.path.dirname(filename))}_{os.path.basename(filename)}")

@@ -1,6 +1,9 @@
 import os
 import shutil
 
+# import utils.utils
+# utils.utils.resize_images('C:\\Development\\CS4245\\data\\cartoonset100k\\', 'C:\\Development\\CS4245\\data\\cartoon_faces\\all_faces\\')
+
 # model_to_train = 'dcgan'
 model_to_train = 'wgan-gp'
 
@@ -16,7 +19,7 @@ config = {
 
     # network
     'noise_size': 100,
-    'noise_type': 'normal', # uniform / normal
+    'noise_type': 'normal',  # uniform / normal
     'discriminator_feature_map_depth': 64,
     'generator_feature_map_depth': 64,
 
@@ -68,14 +71,13 @@ from experiments import Experiment
 device = th.device('cuda' if th.cuda.is_available() else 'cpu')
 
 # create dataset
-transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor(), 
-torchvision.transforms.RandomHorizontalFlip()])
+transform = torchvision.transforms.Compose([torchvision.transforms.ToTensor(), ])
 dataset = torchvision.datasets.ImageFolder(config['data_directory'], transform=transform)
 dataloader = DataLoader(dataset, batch_size=config['batch_size'], shuffle=True, num_workers=config['num_workers'])
 
 if config['model_name'] == 'dcgan':
     # create networks
-    generator = Generator(config['noise_size'],config['generator_feature_map_depth']).to(device)
+    generator = Generator(config['noise_size'], config['generator_feature_map_depth']).to(device)
     discriminator = Discriminator(config['discriminator_feature_map_depth']).to(device)
     generator.apply(weights_init)
     discriminator.apply(weights_init)
