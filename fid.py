@@ -10,9 +10,9 @@ def get_device():
 def main():
     # config options
     model_type = 'wgan' # dcgan/wgan
-    num_generated = 100
-    data_path = '/Users/fransdeboer/Projects/CS4245/data/faces_reduced/face'
-    results_path = '/Users/fransdeboer/Downloads/wgan_augmented'
+    num_generated = 1000
+    data_path = '/home/frans/Projects/CS4245/data/faces/face'
+    results_path = '/home/frans/Projects/CS4245/results/wgan_augmented'
     # load either dcgan or wgan generator
     if model_type == 'dcgan':
         from models import Generator
@@ -21,7 +21,7 @@ def main():
     # create constant noise
     noise = torch.randn(num_generated, 100, 1, 1, device=get_device())   
     # create generator
-    generator = Generator(100, 64)
+    generator = Generator(100, 64).to(get_device())
     # load all checkpoint directories
     fid_values = []
     checkpoint_directories = sorted(os.listdir(results_path))
@@ -41,12 +41,13 @@ def main():
             save_image(image, f'./fid_images/image_{i}.png')
         # calculate fid value
         fid_value = calculate_fid_given_paths([data_path,'./fid_images'],
-                                            500,
+                                            32,
                                             get_device(),
                                             2048)
         print(fid_value)
         fid_values.append(fid_value)
         shutil.rmtree('./fid_images')
+        torch.cuda.empty_cache()
     print(fid_values)
 
 if __name__ == '__main__':

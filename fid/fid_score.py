@@ -41,7 +41,7 @@ import torchvision.transforms as TF
 from PIL import Image
 from scipy import linalg
 from torch.nn.functional import adaptive_avg_pool2d
-
+from tqdm import tqdm
 
 from .inception import InceptionV3
 
@@ -102,7 +102,7 @@ def get_activations(files, model, batch_size=50, dims=2048, device='cpu',
 
     start_idx = 0
 
-    for batch in dataloader:
+    for batch in tqdm(dataloader):
         batch = batch.to(device)
 
         with torch.no_grad():
