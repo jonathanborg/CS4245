@@ -30,6 +30,10 @@ Horizontal Flip | ![DCGAN Gif](Images/dcgan_data.gif) | ![WGAN Gif](Images/wgan_
 
 ---
 
+![Example 0 - 50 epoch](Images/evolution.gif)
+
+---
+
 ![Results](Images/graph.jpeg)
 
 ---
