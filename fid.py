@@ -26,6 +26,9 @@ def main():
     fid_values = []
     checkpoint_directories = sorted(os.listdir(results_path))
     # precompute data m1, s1
+    block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[2048]
+
+    model = InceptionV3([block_idx]).to(get_device())
     m1, s1 = compute_statistics_of_path(data_path, model, 32,
                                         2048, get_device(), 8)
 
@@ -48,10 +51,6 @@ def main():
                                             32,
                                             get_device(),
                                             2048)
-
-        block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[2048]
-
-        model = InceptionV3([block_idx]).to(get_device())
         m2, s2 = compute_statistics_of_path('./fid_images', model, 32,
                                             2048, get_device(), 8)
         fid_value = calculate_frechet_distance(m1, s1, m2, s2)
