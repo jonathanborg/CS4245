@@ -23,10 +23,10 @@
 
 ---
 
-| <div style="width:20px">Data</div>  | <div style="width:180px">DCGAN</div> | <div style="width:180px">WGAN</div> |
+| <div style="width:20px">Data</div>  | <div style="width:200px">DCGAN</div> | <div style="width:200px">WGAN</div> |
 :---:|:-------------------------:|:-------------------------:
-No Aug-mentation | ![DCGAN Gif](Images/dcgan.gif) | ![WGAN Gif](Images/wgan.gif)
-Hori-zontal Flip | ![DCGAN Gif](Images/dcgan_data.gif) | ![WGAN Gif](Images/wgan_data.gif)
+No Augmentation | ![DCGAN Gif](Images/dcgan.gif) | ![WGAN Gif](Images/wgan.gif)
+Horizontal Flip | ![DCGAN Gif](Images/dcgan_data.gif) | ![WGAN Gif](Images/wgan_data.gif)
 
 
 ---
