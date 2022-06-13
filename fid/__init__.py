@@ -1,1 +1,2 @@
-from .fid_score import calculate_fid_given_paths
+from .fid_score import calculate_fid_given_paths, compute_statistics_of_path, calculate_frechet_distance
+from .inception import InceptionV3

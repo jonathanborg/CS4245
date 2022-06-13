@@ -1,4 +1,4 @@
-from fid import calculate_fid_given_paths
+from fid import calculate_fid_given_paths, compute_statistics_of_path, InceptionV3, calculate_frechet_distance
 import torch
 import os
 from torchvision.utils import save_image
@@ -25,6 +25,10 @@ def main():
     # load all checkpoint directories
     fid_values = []
     checkpoint_directories = sorted(os.listdir(results_path))
+    # precompute data m1, s1
+    m1, s1 = compute_statistics_of_path(data_path, model, 32,
+                                        2048, get_device(), 8)
+
     for checkpoint_index in checkpoint_directories:
         print(f'Evaluating {checkpoint_index}')
         # load checkpoint file
@@ -44,6 +48,13 @@ def main():
                                             32,
                                             get_device(),
                                             2048)
+
+        block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[2048]
+
+        model = InceptionV3([block_idx]).to(get_device())
+        m2, s2 = compute_statistics_of_path('./fid_images', model, 32,
+                                            2048, get_device(), 8)
+        fid_value = calculate_frechet_distance(m1, s1, m2, s2)
         print(fid_value)
         fid_values.append(fid_value)
         shutil.rmtree('./fid_images')
