@@ -47,10 +47,6 @@ def main():
         for i,image in enumerate(images):
             save_image(image, f'./fid_images/image_{i}.png')
         # calculate fid value
-        fid_value = calculate_fid_given_paths([data_path,'./fid_images'],
-                                            32,
-                                            get_device(),
-                                            2048)
         m2, s2 = compute_statistics_of_path('./fid_images', model, 32,
                                             2048, get_device(), 8)
         fid_value = calculate_frechet_distance(m1, s1, m2, s2)
@@ -60,5 +56,8 @@ def main():
         torch.cuda.empty_cache()
     print(fid_values)
 
+def graphs():
+    pass
+
 if __name__ == '__main__':
-    main()
+    graphs()
