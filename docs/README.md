@@ -155,7 +155,7 @@ This loss can be interpreted as the discriminator trying to maximize this expres
 
 ##### Wasserstein GAN with Gradient Penalty
 
-In the original WGAN paper, the Lipschitz constraint is enforced by separately clipping each of the weights such that the gradient norm stays less or equal to 1. However, the authors mention that this is a bad idea [5], allowing them to research this in more detail in future research. That is Wasserstein GAN with Gradient Penalty, abbreviated to WGAN-GP [6].
+In the original WGAN paper, the Lipschitz constraint is enforced by separately clipping each of the weights such that the gradient norm stays less or equal to 1.  However, the authors mention that this is a bad idea [5], they proposed future work to research this more thoroughly. As a consequence, Wasserstein GAN with Gradient Penalty (WGAN-GP) [6] was introduced.
 
 **Gradient Penalty** is an alternative to weight clipping to enforce the Lipschitz constraint. Instead of clipping weights, the authors directly constrain the gradient norm of the critic's output with respect to its input. This is obtained by adding a (gradient) penalty term to the Wasserstein Loss:
 
