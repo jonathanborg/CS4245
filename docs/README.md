@@ -137,7 +137,7 @@ The Wasserstein GAN is capable of solving both previously mentioned issues. Furt
 
 ![EM Distance](Images/em_distance.PNG)
 
-The Wasserstein distance explicitly has a continuous and differentiable gradient property even after the discriminator (also known as a critic when using WGANs) is well trained. This continuous and differentiable gradient property alleviates the problem of [mode collapse](https://developers.google.com/machine-learning/gan/problems)
+The Wasserstein distance explicitly has a continuous and differentiable gradient property even after the discriminator (also known as a critic when using WGANs) is well trained. This continuous and differentiable gradient property alleviates the problem of [mode collapse](https://developers.google.com/machine-learning/gan/problems).
 
 
 Because the original equation for the Wasserstein distance is intractable to compute, the authors used the Kantorovich-Rubinstein duality to simplify the calculation to the following:
@@ -205,13 +205,9 @@ Figure 4 shows the results for DCGAN after 60 epochs. Starting from this epoch, 
 
 ### DCGAN With Data Augmentation
 
-| ![dcgan aug 60](Images/dcgan_aug_60.png)| 
-|:---:|
-| Figure 5: DCGAN With Data Augmentation - 60 Epochs |
-
-| ![dcgan aug 90](Images/dcgan_aug_90.png) |
-|:---:|
-| Figure 6: DCGAN With Data Augmentation - 90 Epochs |
+| ![dcgan aug 60](Images/dcgan_aug_60.png)|![dcgan aug 90](Images/dcgan_aug_90.png) | 
+|:---:|:---:|
+| Figure 5: DCGAN With Data Augmentation - 60 Epochs | Figure 6: DCGAN With Data Augmentation - 90 Epochs |
 
 Figure 5 shows the results for DCGAN with Data Augmentation after 60 epochs. The results here are not noticeably better than the DCGAN results without data augmentation at epoch 60. What is noticeably different, however, is the collapse. Just like DCGAN without augmentation, DCGAN with augmentation starts collapsing after epoch 60. However, the collapse with augmentation is less drastic and still gives results resembling faces at epoch 90 (this can be seen in Figure 6).
 
@@ -232,9 +228,13 @@ The FID score does not indicate a significant difference between the WGAN at epo
 
 Figure 8 shows the results for WGAN with Data Augmentation after 100 epochs. The resulting images might be of slightly higher quality, but it is challenging to distinguish clearly between this and WGAN without Data Augmentation. The FID score is slightly lower and also stays lower. This might be the same effect as DCGAN with Data Augmentation, which ended up with an FID score lower than DCGAN without Data Augmentation.
 
+---
+
 ## Conclusion
 
 From these results, we can tentatively conclude that WGAN appears to train better than DCGAN. It collapses less and generates higher-quality images than DCGAN. Furthermore, Data Augmentation seems to affect both image quality and FID score positively. However, all of these results are obtained from single runs of the algorithms and could be quite noisy. Following this research, an interesting follow-up would be to investigate the vanishing gradients observed in the DCGAN and understand the cause of this problem.
+
+---
 
 ## References
 
