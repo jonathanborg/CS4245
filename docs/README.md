@@ -116,7 +116,7 @@ The **Generator** consists of convolutional-transpose layers, batch normalizatio
 For **Weight initialization** of our models we follow the guidelines as described in the DCGAN [4]. This means that all weights are randomly initialized with a ${mean = 0}$ and ${standard~deviation(stdev)=0.02}$. 
 
 
-In terms of **Loss Function**, the [**Binary Cross Entropy (BCELoss)**](https://pytorch.org/docs/stable/generated/torch.nn.BCELoss.html\#bceloss) is used. And we opted to use the **Adam} optimizer, as specified in the DCGAN paper.
+In terms of **Loss Function**, the [**Binary Cross Entropy (BCELoss)**](https://pytorch.org/docs/stable/generated/torch.nn.BCELoss.html\#bceloss) is used. And we opted to use the **Adam** optimizer, as specified in the DCGAN paper.
 
 | ![Architecture of DCGAN](Images/dcgan.png) |
 |:---:|
@@ -145,9 +145,9 @@ Because the original equation for the Wasserstein distance is intractable to com
 
 Where ${f(x)}$ is the **critic (discriminator)** and the ${x}$'s are sampled from two distributions namely the training distribution ${P_r}$ and the generator $P_\theta$.
 
-The discriminator is named critic because the critic $f$ does not classify (or discriminate) but instead evaluates how 'real' some input is (criticizing the output). With respect to the loss expression, we are now checking how close the **distance} is between samples from $P_r$ and $P_\theta$, hence the so-called critic.
+The discriminator is named critic because the critic $f$ does not classify (or discriminate) but instead evaluates how 'real' some input is (criticizing the output). With respect to the loss expression, we are now checking how close the **distance** is between samples from $P_r$ and $P_\theta$, hence the so-called critic.
 
-Finally, we have a **constraint (Lipschitz constraint)** $||f||_L \leq 1$, representing that the norm of the gradient of $f$ must be less than or equal to 1.
+Finally, we have a **constraint (Lipschitz constraint)** ${||f||_L \leq 1}$, representing that the norm of the gradient of $f$ must be less than or equal to 1.
 
 This loss can be interpreted as the discriminator trying to maximize this expression, meaning that it wants to separate the two distributions $P_r$ and $P_\theta$ as much as possible, while the generator aims to minimize it. 
 
@@ -162,7 +162,7 @@ In the original WGAN paper, the Lipschitz constraint is enforced by separately c
 
 The paper proved that points interpolated between the real and generated data should have a gradient norm of 1 for $f$. This is then used to enforce the Lipschitz constraint by ensuring that the gradients' norm stays less or equal to 1. 
 
-A slightly more elaborate explanation; (interpolated images) $\hat{x}$'s are sampled from $P_{\hat{x}}$ which are points between $P_g$ (generated images) and $P_r$ (real images) as they lie in between the real and generated data. To minimize this loss, the penalty term must be minimized as well, and this only happens when the penalty term approaches 0 or when $||\nabla_{\hat{x}} D(\hat{x})||_2$, the norm of the gradient of the interpolated image, is close to 1 which will enforce the Lipschitz constraint. To enforce the Lipschitz constraint, we must thus make sure that the gradient norm of the interpolation is close to 1. If this is not the case, we penalize the model so that it learns to satisfy this constraint.
+A slightly more elaborate explanation; (interpolated images) $\hat{x}$'s are sampled from $P_{\hat{x}}$ which are points between $P_g$ (generated images) and $P_r$ (real images) as they lie in between the real and generated data. To minimize this loss, the penalty term must be minimized as well, and this only happens when the penalty term approaches 0 or when ${||\nabla_{\hat{x}} D(\hat{x})||_2}$, the norm of the gradient of the interpolated image, is close to 1 which will enforce the Lipschitz constraint. To enforce the Lipschitz constraint, we must thus make sure that the gradient norm of the interpolation is close to 1. If this is not the case, we penalize the model so that it learns to satisfy this constraint.
 
 
 ##### Implementation changes
