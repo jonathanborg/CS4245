@@ -147,7 +147,7 @@ Where ${f(x)}$ is the **critic (discriminator)** and the ${x}$'s are sampled fro
 
 The discriminator is named critic because the critic $f$ does not classify (or discriminate) but instead evaluates how 'real' some input is (criticizing the output). With respect to the loss expression, we are now checking how close the **distance** is between samples from $P_r$ and $P_\theta$, hence the so-called critic.
 
-Finally, we have a **constraint (Lipschitz constraint)** $|f|_L \leq 1$, representing that the norm of the gradient of $f$ must be less than or equal to 1.
+Finally, we have a **constraint (Lipschitz constraint)** $\|f\|_L \leq 1$, representing that the norm of the gradient of $f$ must be less than or equal to 1.
 
 This loss can be interpreted as the discriminator trying to maximize this expression, meaning that it wants to separate the two distributions $P_r$ and $P_\theta$ as much as possible, while the generator aims to minimize it. 
 
