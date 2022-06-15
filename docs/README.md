@@ -83,7 +83,7 @@ Seeing as the inspiration for this type of research was obtained from a paper co
 
 We also looked into different datasets, expressly, different animation styles, such as cartoon faces, apart from this primary dataset. However, after evaluating and training the network on these datasets, we opted to omit this from our research.
 
-One dataset we considered was he Google Cartoon [dataset](https://google.github.io/cartoonset/), but it became evident that because all faces are very structured and well oriented the results were not that visually interesting, therefore as shown in Appendix A.
+One dataset we considered was he Google Cartoon [dataset](https://google.github.io/cartoonset/), but it became evident that because all faces are very structured and well oriented the results were not that visually interesting, and therefore omitted from the main research (these can be seen in Appendix A).
 
 Another dataset considered was the iCartoon [3] dataset. Even though this was very robust, we struggled to obtain a large enough dataset which followed a similar artistic style. The biggest problem was that this dataset only provided approximately 100 images per character, which posed a problem due to the large variability in the dataset, where images ranged from hand-drawn faces to live animations.
 
