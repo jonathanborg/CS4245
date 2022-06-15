@@ -176,7 +176,7 @@ The authors first propose that the critic be trained five times as much as the g
 
 ---
 
-## Experiments \& Results
+## Experiments & Results
 
 As for evaluation metrics, we decided to use the Frechet Inception Distance (FID), which measures the quality of images created by a generative model. Unlike the inception score (IS), which evaluates only the distribution of generated images, the FID compares the distribution of generated images with the distribution of real images that were used to train the generator. 
 
