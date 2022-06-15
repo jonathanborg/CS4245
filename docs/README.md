@@ -200,7 +200,7 @@ We split our tests into two sections based on the model used, either DCGAN or WG
 |:---:|
 | Figure 4: DCGAN Without Data Augmentation - 60 Epochs |
 
-Figure 4 shows the results for DCGAN after 60 epochs. Starting from this epoch, the model almost immediately collapsed, and the generator started only to produce random noise. This can also be seen in 3, where after epoch 60, the FID shoots up from a value of about 150 to a value of about 400.
+Figure 4 shows the results for DCGAN after 60 epochs. Starting from this epoch, the model almost immediately collapsed, and the generator started only to produce random noise. This can also be seen in 3, where after epoch 60, the FID score shoots up from a value of about 150 to a value of about 400.
 
 ### DCGAN With Data Augmentation
 
